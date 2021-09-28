@@ -1,0 +1,7 @@
+{
+  "port": 5003,
+  "mongoURILocal": "mongodb://localhost:27017/billionstracker",
+  "mongoURI": "mongodb+srv://george:1234qwer@billionstraker.8pggx.mongodb.net/billionstraker?retryWrites=true&w=majority",
+  "jwtAccessSecret": "really secret string",
+  "jwtRefreshSecret": "really secret string 2"
+}
