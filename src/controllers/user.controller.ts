@@ -38,7 +38,7 @@ export const logIn: ControllerFunction = async (req, res, next) => {
 
     const logInRes = await authService.logIn(login, password)
 
-    res.cookie('refreshToken', logInRes.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+    res.cookie('refreshToken', logInRes.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure:true })
     return res.json(logInRes)
   } catch (e) {
     next(e)
@@ -61,7 +61,7 @@ export const refresh: ControllerFunction = async (req, res, next) => {
     const { refreshToken } = req.cookies
     const refreshRes = await authService.refresh(refreshToken)
 
-    res.cookie('refreshToken', refreshRes.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+    res.cookie('refreshToken', refreshRes.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure:true })
     return res.json(refreshRes)
   } catch (e) {
     next(e)
