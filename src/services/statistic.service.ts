@@ -65,10 +65,16 @@ type getWholeStatisticReturnType = {
   userExpensesThisMonth: number,
   userIncomes: number,
   userIncomesThisMonth: number,
+  averageExpensePerMonth: number
+  averageIncomePerMonth: number
+}
+
+type expensesIncomesPerMonth = {
+  _id: { year: number, month: number },
+  total: number
 }
 
 export const getWholeStatistic = async (userId: Types.ObjectId): Promise<getWholeStatisticReturnType | null> => {
-
   const generalStatistic = await getGeneralStatistic(userId)
 
   if (!generalStatistic) {
@@ -111,11 +117,67 @@ export const getWholeStatistic = async (userId: Types.ObjectId): Promise<getWhol
       }
     }])
 
+  const expensesPerMonth:expensesIncomesPerMonth[] = await Transaction.aggregate([{
+    $match: {
+      'ownerId': new Types.ObjectId(userId),
+      'isExpense': true,
+      $expr: {
+        $and: [
+          { $lt: [{ $month: '$date' }, { $month: new Date() }] },
+          { $lte: [{ $year: '$date' }, { $year: new Date() }] },
+        ],
+      },
+    }
+  }, {
+    $group: {
+      _id: {
+        "year": { "$year": "$date" },
+        "month": { "$month": "$date" },
+      },
+      total: {
+        $sum: '$sum'
+      }
+    }
+  }])
+
+  const incomesPerMonth:expensesIncomesPerMonth[] = await Transaction.aggregate([{
+    $match: {
+      'ownerId': new Types.ObjectId(userId),
+      'isExpense': false,
+      $expr: {
+        $and: [
+          { $lt: [{ $month: '$date' }, { $month: new Date() }] },
+          { $lte: [{ $year: '$date' }, { $year: new Date() }] },
+        ],
+      },
+    }
+  }, {
+    $group: {
+      _id: {
+        "year": { "$year": "$date" },
+        "month": { "$month": "$date" },
+      },
+      total: {
+        $sum: '$sum'
+      }
+    }
+  }])
+
+  const averageExpensePerMonth:number =
+    expensesPerMonth.reduce((prev, current) => prev + current.total, 0)
+    / (expensesPerMonth.length || 1)
+
+  const averageIncomePerMonth:number =
+    incomesPerMonth.reduce((prev, current) => prev + current.total, 0)
+    / (incomesPerMonth.length || 1)
+
   return {
     userExpenses: generalStatistic.userExpenses,
     userExpensesThisMonth: generalStatistic.userExpensesThisMonth,
     userIncomes: userIncomes[0]?.total | 0,
-    userIncomesThisMonth: userIncomesThisMonth[0]?.total | 0
+    userIncomesThisMonth: userIncomesThisMonth[0]?.total | 0,
+    averageExpensePerMonth: averageExpensePerMonth,
+    averageIncomePerMonth: averageIncomePerMonth
   }
 }
 
@@ -161,7 +223,7 @@ export const getStatisticForRange = async (userId: Types.ObjectId, from: Date, t
     return null
   }
 
-  const totalSpent = transactionsInRange.reduce((prev,current) => prev + current.total, 0)
+  const totalSpent = transactionsInRange.reduce((prev, current) => prev + current.total, 0)
 
   return {
     transactionsInRange,
