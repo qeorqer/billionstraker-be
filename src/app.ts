@@ -1,18 +1,19 @@
-import express, { Application, Request, Response } from 'express'
-import config from 'config'
-import cors from 'cors'
-import cookieParser from 'cookie-parser'
-import mongoose from 'mongoose'
-import userRouter from "./routes/user.route";
-import categoryRouter from "./routes/category.route";
-import transactionRouter from "./routes/transaction.route";
-import statisticRouter from "./routes/statistic.route";
-import errorMiddleware from './middlewares/errors.middleware'
+import 'dotenv/config';
+import express, { Application, Request, Response } from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
 
-const app: Application = express()
+import userRouter from './routes/user.route';
+import categoryRouter from './routes/category.route';
+import transactionRouter from './routes/transaction.route';
+import statisticRouter from './routes/statistic.route';
+import errorMiddleware from './middlewares/errors.middleware';
 
-const PORT:string | number = process.env.PORT || config.get('port') || 4999
-const DB_URI: string = config.get('mongoURI')
+const app: Application = express();
+
+const PORT: string | number = process.env.PORT || 4999
+const DB_URI: string = process.env.mongoURI!;
 
 app.use(cors({
   credentials: true,

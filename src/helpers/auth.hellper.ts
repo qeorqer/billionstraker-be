@@ -1,9 +1,8 @@
-import { Types } from "mongoose"
-import config from 'config'
-import jwt from 'jsonwebtoken'
+import { Types } from "mongoose";
+import jwt from 'jsonwebtoken';
 
-const accessSecret:string = config.get('jwtAccessSecret')
-const refreshSecret:string = config.get('jwtRefreshSecret')
+const accessSecret:string = process.env.jwtAccessSecret!;
+const refreshSecret:string = process.env.jwtRefreshSecret!;
 
 export const generateTokenPair = (userId: Types.ObjectId): { accessToken: string, refreshToken: string } => {
   return {
