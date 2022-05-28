@@ -1,58 +1,64 @@
-import express, { Application, Request, Response } from 'express'
-import config from 'config'
-import cors from 'cors'
-import cookieParser from 'cookie-parser'
-import mongoose from 'mongoose'
-import userRouter from "./routes/user.route";
-import categoryRouter from "./routes/category.route";
-import transactionRouter from "./routes/transaction.route";
-import statisticRouter from "./routes/statistic.route";
-import errorMiddleware from './middlewares/errors.middleware'
+import 'dotenv/config';
+import express, { Application, Request, Response } from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
 
-const app: Application = express()
+import userRouter from './routes/user.route';
+import categoryRouter from './routes/category.route';
+import transactionRouter from './routes/transaction.route';
+import statisticRouter from './routes/statistic.route';
+import errorMiddleware from './middlewares/errors.middleware';
 
-const PORT:string | number = process.env.PORT || config.get('port') || 4999
-const DB_URI: string = config.get('mongoURI')
+const app: Application = express();
 
-app.use(cors({
-  credentials: true,
-  origin: ['http://localhost:3000', 'https://qeorqer.github.io'],
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  preflightContinue: false,
-  optionsSuccessStatus: 200,
-}))
+const PORT: string | number = process.env.PORT || 4999;
+const DB_URI: string = process.env.mongoURI!;
 
-app.set('trust proxy', true)
-app.use(cookieParser())
-app.use(express.json())
-app.use('/api/user', userRouter)
-app.use('/api/category', categoryRouter)
-app.use('/api/transaction', transactionRouter)
-app.use('/api/statistic', statisticRouter)
-app.use(errorMiddleware)
+app.use(
+  cors({
+    credentials: true,
+    origin: ['http://localhost:3000', 'https://qeorqer.github.io'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 200,
+  }),
+);
+
+app.set('trust proxy', true);
+app.use(cookieParser());
+app.use(express.json());
+app.use('/api/user', userRouter);
+app.use('/api/category', categoryRouter);
+app.use('/api/transaction', transactionRouter);
+app.use('/api/statistic', statisticRouter);
+app.use(errorMiddleware);
 
 const start = () => {
   try {
-    mongoose.connect(DB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true
-    }, (err) => {
-      if (err) {
-        throw new Error(`Connection to DB: ${err.message}`)
-      }
+    mongoose.connect(
+      DB_URI,
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true,
+      },
+      (err) => {
+        if (err) {
+          throw new Error(`Connection to DB: ${err.message}`);
+        }
 
-      app.listen(PORT, () => console.log(`App is running on a ${PORT} port`))
-    })
-
+        app.listen(PORT, () => console.log(`App is running on a ${PORT} port`));
+      },
+    );
   } catch (e) {
-    console.log('Server Error', e.message)
-    process.exit(1)
+    console.log('Server Error', e.message);
+    process.exit(1);
   }
-}
+};
 
 app.get('/', (req: Request, res: Response) => {
-  res.json('content will be here')
-})
+  res.json('content will be here');
+});
 
-start()
+start();
