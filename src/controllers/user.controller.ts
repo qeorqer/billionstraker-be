@@ -16,7 +16,7 @@ export const signUp: ControllerFunction = async (req, res, next) => {
 
     if (!errors.isEmpty()) {
       return next(
-        ApiError.BadRequest('There are validation errors', 'Ошибки валидации'),
+        ApiError.BadRequest('There are validation errors', 'Ошибки валидации', errors.array()),
       );
     }
 
@@ -39,7 +39,7 @@ export const logIn: ControllerFunction = async (req, res, next) => {
 
     if (!errors.isEmpty()) {
       return next(
-        ApiError.BadRequest('There are validation errors', 'Ошибки валидации'),
+        ApiError.BadRequest('There are validation errors', 'Ошибки валидации', errors.array()),
       );
     }
 

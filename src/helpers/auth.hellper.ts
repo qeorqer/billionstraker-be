@@ -1,8 +1,8 @@
 import { Types } from 'mongoose';
 import jwt from 'jsonwebtoken';
 
-const accessSecret: string = process.env.jwtAccessSecret!;
-const refreshSecret: string = process.env.jwtRefreshSecret!;
+const accessSecret: string = process.env.JWT_ACCESS_SECRET!;
+const refreshSecret: string = process.env.JWT_REFRESH_SECRET!;
 
 export const generateTokenPair = (
   userId: Types.ObjectId,

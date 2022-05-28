@@ -1,5 +1,5 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import UUID from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 import Token from '../models/Token.model';
 import ApiError from '../exceptions/api-errors';
@@ -34,7 +34,7 @@ type generateRefreshTokenType = {
 }
 
 const generateRefreshToken = (): generateRefreshTokenType => {
-  const uuid = UUID.v4();
+  const uuid = uuidv4();
   return {
     token: jwt.sign(
       { id: uuid, type: 'refresh' },

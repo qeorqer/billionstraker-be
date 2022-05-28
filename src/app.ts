@@ -13,7 +13,7 @@ import errorMiddleware from './middlewares/errors.middleware';
 const app: Application = express();
 
 const PORT: string | number = process.env.PORT || 4999;
-const DB_URI: string = process.env.mongoURI!;
+const DB_URI: string = process.env.MONGO_URI!;
 
 app.use(
   cors({

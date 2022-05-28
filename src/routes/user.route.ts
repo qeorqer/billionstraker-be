@@ -19,7 +19,7 @@ userRouter.post(
   '/logIn',
   [
     check('login', 'enter normalized email').normalizeEmail().isEmail(),
-    check('password', 'must contain at least 6 symbols').exists(),
+    check('password', 'must contain at least 6 symbols').isLength({ min: 6 }),
   ],
   userController.logIn,
 );

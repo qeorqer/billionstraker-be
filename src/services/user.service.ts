@@ -5,15 +5,10 @@ import User from '../models/User.model';
 import ApiError from '../exceptions/api-errors';
 import { UserForReturnType, UserType } from '../types/user.type';
 import { userDto } from '../dto/user.dto';
-import {
-  generateTokenPair,
-  validateRefreshToken,
-} from '../helpers/auth.hellper';
+import { generateTokenPair, validateRefreshToken } from '../helpers/auth.hellper';
+import { updateTokens, updateTokensReturnType, verifyRefresh } from './token.service';
 
-export const signUp = async (
-  login: string,
-  password: string,
-): Promise<UserType | void> => {
+export const signUp = async (login: string, password: string): Promise<UserType | void> => {
   const isRegistered = await User.findOne({ login });
 
   if (isRegistered) {
@@ -40,10 +35,7 @@ type logInReturnType = {
   accessToken: string;
 };
 
-export const logIn = async (
-  login: string,
-  password: string,
-): Promise<logInReturnType> => {
+export const logIn = async (login: string, password: string): Promise<logInReturnType> => {
   const user = await User.findOne({ login });
 
   if (!user) {
@@ -62,17 +54,13 @@ export const logIn = async (
     );
   }
 
-  const { accessToken, refreshToken } = generateTokenPair(user._id);
+  const tokens = await updateTokens(user._id);
 
-  const returnUser: Partial<UserType> = userDto(user.toObject());
-
-  user.refreshToken = refreshToken;
-  await user.save();
+  const userForReturn: Partial<UserType> = userDto(user.toObject());
 
   return {
-    user: returnUser,
-    refreshToken,
-    accessToken,
+    user: userForReturn,
+    ...tokens,
   };
 };
 
