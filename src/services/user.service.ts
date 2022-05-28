@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 import User from '../models/User.model';
 import ApiError from '../exceptions/api-errors';
-import { UserForReturnType, UserType } from '../interfaces/user.interface';
+import { UserForReturnType, UserType } from '../types/user.type';
 import { userDto } from '../dto/user.dto';
 import {
   generateTokenPair,

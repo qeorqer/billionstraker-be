@@ -1,6 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 
-import { tokenType } from '../interfaces/token.interface';
+import { tokenType } from '../types/token.type';
 
 const Token = new Schema({
   tokenId: { type: String, required: true },

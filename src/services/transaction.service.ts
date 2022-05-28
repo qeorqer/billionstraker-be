@@ -1,9 +1,9 @@
 import Transaction from '../models/Transaction.model';
 import ApiError from '../exceptions/api-errors';
-import { TransactionType } from '../interfaces/transaction.interface';
+import { TransactionType } from '../types/transaction.type';
 import * as userService from '../services/user.service';
 import { Types } from 'mongoose';
-import { UserType } from '../interfaces/user.interface';
+import { UserType } from '../types/user.type';
 
 export const addTransaction = async (
   transaction: TransactionType,
