@@ -7,8 +7,7 @@ import ApiError from '../exceptions/api-errors';
 export const verifyAccess = (accessToken: string): JwtPayload | string => {
   try {
     return jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET!);
-    // @ts-ignore
-  } catch (error: Error) {
+  } catch (error) {
     throw ApiError.BadRequest(error.message!, '');
   }
 };
@@ -16,8 +15,7 @@ export const verifyAccess = (accessToken: string): JwtPayload | string => {
 export const verifyRefresh = (refreshToken: string): JwtPayload | string => {
   try {
     return jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!);
-    // @ts-ignore
-  } catch (error: Error) {
+  } catch (error) {
     throw ApiError.BadRequest(error.message, '');
   }
 };
@@ -49,7 +47,7 @@ const generateRefreshToken = (): generateRefreshTokenType => {
 const replaceDbRefreshToken = async (
   {
     newTokenId, oldTokenId, userId, update,
-  }: {newTokenId: string, oldTokenId: string, userId: string, update: boolean}) => {
+  }: { newTokenId: string, oldTokenId: string, userId: string, update: boolean }) => {
   if (update) {
     await Token.findOneAndRemove({ tokenId: oldTokenId });
   }
