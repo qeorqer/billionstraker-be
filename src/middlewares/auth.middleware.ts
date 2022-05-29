@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
+
 import ApiError from '../exceptions/api-errors';
-import { validateAccessToken } from '../helpers/auth.hellper';
+import { verifyAccess } from '../services/token.service';
 
 export default function (
   req: Request,
@@ -18,7 +19,7 @@ export default function (
       return next(ApiError.UnauthorizedError());
     }
 
-    const userData = validateAccessToken(accessToken);
+    const userData = verifyAccess(accessToken);
     if (!userData) {
       return next(ApiError.UnauthorizedError());
     }
