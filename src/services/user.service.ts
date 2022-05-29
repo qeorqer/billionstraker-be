@@ -87,24 +87,17 @@ export const refresh = async (refreshToken: string): Promise<refreshReturnType> 
  return await updateTokens(token.userId, token.tokenId, true);
 };
 
-type logOutReturnType = {
-  refreshToken: string;
-};
-
-
-export const logOut = async (refreshToken: string): Promise<logOutReturnType> => {
-  const user = await User.findOne({ refreshToken });
-
-  if (!user) {
-    throw ApiError.BadRequest('No such token', ' Нет такго токена');
+export const logOut = async (refreshToken: string): Promise<void> => {
+  if (!refreshToken) {
+    throw ApiError.UnauthorizedError();
   }
 
-  user.refreshToken = undefined;
-  await user.save();
+  const verifiedToken = verifyRefresh(refreshToken);
+  if (typeof verifiedToken === 'string'|| verifiedToken.type !== 'refresh') {
+    throw ApiError.UnauthorizedError();
+  }
 
-  return {
-    refreshToken,
-  };
+  await Token.findOneAndRemove({ tokenId: verifiedToken.id });
 };
 
 export const updateBalance = async (

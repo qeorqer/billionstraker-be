@@ -24,9 +24,10 @@ userRouter.post(
   userController.logIn,
 );
 
+userRouter.get('/refresh', userController.refresh);
+
 userRouter.post('/logOut', userController.logOut);
 
-userRouter.get('/refresh', userController.refresh);
 
 userRouter.patch(
   '/setFirstEnter',

@@ -59,17 +59,6 @@ export const logIn: ControllerFunction = async (req, res, next) => {
   }
 };
 
-export const logOut: ControllerFunction = async (req, res, next) => {
-  try {
-    const { refreshToken } = req.cookies;
-    const logOutRes = await userService.logOut(refreshToken);
-
-    return res.status(200).json({ deletedToken: logOutRes.refreshToken });
-  } catch (e) {
-    next(e);
-  }
-};
-
 export const refresh: ControllerFunction = async (req, res, next) => {
   try {
     const { refreshToken } = req.cookies;
@@ -82,6 +71,16 @@ export const refresh: ControllerFunction = async (req, res, next) => {
       sameSite: 'none',
     });
     return res.json(refreshRes);
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const logOut: ControllerFunction = async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body;
+    await userService.logOut(refreshToken);
+    return res.status(200).json('log out successfully');
   } catch (e) {
     next(e);
   }
