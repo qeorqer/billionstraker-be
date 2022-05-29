@@ -2,11 +2,11 @@ import { Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 import User from '../models/User.model';
+import Token from '../models/Token.model';
 import ApiError from '../exceptions/api-errors';
-import { UserForReturnType, UserType } from '../types/user.type';
+import { UserType } from '../types/user.type';
 import { userDto } from '../dto/user.dto';
-import { generateTokenPair, validateRefreshToken } from '../helpers/auth.hellper';
-import { updateTokens, updateTokensReturnType, verifyRefresh } from './token.service';
+import { updateTokens, verifyRefresh } from './token.service';
 
 export const signUp = async (login: string, password: string): Promise<UserType | void> => {
   const isRegistered = await User.findOne({ login });
@@ -64,13 +64,35 @@ export const logIn = async (login: string, password: string): Promise<logInRetur
   };
 };
 
+type refreshReturnType = {
+  refreshToken: string;
+  accessToken: string;
+}
+
+export const refresh = async (refreshToken: string): Promise<refreshReturnType> => {
+  if (!refreshToken) {
+    throw ApiError.UnauthorizedError();
+  }
+
+  const verifiedToken = verifyRefresh(refreshToken);
+  if (typeof verifiedToken === 'string'|| verifiedToken.type !== 'refresh') {
+    throw ApiError.UnauthorizedError();
+  }
+
+  const token = await Token.findOne({ tokenId: verifiedToken.id });
+  if (!token) {
+    throw ApiError.BadRequest('Token is invalid', '');
+  }
+
+ return await updateTokens(token.userId, token.tokenId, true);
+};
+
 type logOutReturnType = {
   refreshToken: string;
 };
 
-export const logOut = async (
-  refreshToken: string,
-): Promise<logOutReturnType> => {
+
+export const logOut = async (refreshToken: string): Promise<logOutReturnType> => {
   const user = await User.findOne({ refreshToken });
 
   if (!user) {
@@ -82,34 +104,6 @@ export const logOut = async (
 
   return {
     refreshToken,
-  };
-};
-
-export const refresh = async (
-  refreshToken: string,
-): Promise<logInReturnType> => {
-  if (!refreshToken) {
-    throw ApiError.UnauthorizedError();
-  }
-
-  const userData = validateRefreshToken(refreshToken);
-  const user = await User.findOne({ refreshToken });
-
-  if (!userData || !user) {
-    throw ApiError.UnauthorizedError();
-  }
-
-  const { accessToken, refreshToken: newRefresh } = generateTokenPair(user._id);
-
-  const returnUser: UserForReturnType = userDto(user.toObject());
-
-  user.refreshToken = newRefresh;
-  await user.save();
-
-  return {
-    user: returnUser,
-    refreshToken: newRefresh,
-    accessToken,
   };
 };
 
