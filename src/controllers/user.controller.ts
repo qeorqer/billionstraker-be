@@ -16,7 +16,11 @@ export const signUp: ControllerFunction = async (req, res, next) => {
 
     if (!errors.isEmpty()) {
       return next(
-        ApiError.BadRequest('There are validation errors', 'Ошибки валидации', errors.array()),
+        ApiError.BadRequest(
+          'There are validation errors',
+          'Ошибки валидации',
+          errors.array(),
+        ),
       );
     }
 
@@ -39,7 +43,11 @@ export const logIn: ControllerFunction = async (req, res, next) => {
 
     if (!errors.isEmpty()) {
       return next(
-        ApiError.BadRequest('There are validation errors', 'Ошибки валидации', errors.array()),
+        ApiError.BadRequest(
+          'There are validation errors',
+          'Ошибки валидации',
+          errors.array(),
+        ),
       );
     }
 
@@ -62,15 +70,15 @@ export const logIn: ControllerFunction = async (req, res, next) => {
 export const refresh: ControllerFunction = async (req, res, next) => {
   try {
     const { refreshToken } = req.cookies;
-    const refreshRes = await userService.refresh(refreshToken);
+    const result = await userService.refresh(refreshToken);
 
-    res.cookie('refreshToken', refreshRes.refreshToken, {
+    res.cookie('refreshToken', result.refreshToken, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       secure: true,
       sameSite: 'none',
     });
-    return res.json(refreshRes);
+    return res.json(result);
   } catch (e) {
     next(e);
   }

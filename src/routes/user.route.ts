@@ -28,7 +28,6 @@ userRouter.get('/refresh', userController.refresh);
 
 userRouter.post('/logOut', userController.logOut);
 
-
 userRouter.patch(
   '/setFirstEnter',
   authMiddleware,

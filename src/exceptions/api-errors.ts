@@ -27,7 +27,11 @@ export default class ApiError extends Error {
     );
   }
 
-  static BadRequest(messageEn: string, messageRu: string, errors: ValidationError[] = [],) {
+  static BadRequest(
+    messageEn: string,
+    messageRu: string,
+    errors: ValidationError[] = [],
+  ) {
     return new ApiError(400, messageEn, messageRu, errors);
   }
 

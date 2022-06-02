@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node dist/app.js",
     "postinstall": "tsc",
-    "dev": "nodemon src/app.ts"
+    "dev": "nodemon src/app.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix",
+    "format": "prettier --write './**/*.{js,ts,}' --config ./.prettierrc"
   },
   "author": "George Pustovit <gorapus@gmail.com>",
   "license": "ISC",

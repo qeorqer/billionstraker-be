@@ -8,7 +8,10 @@ import { UserType } from '../types/user.type';
 import { userDto } from '../dto/user.dto';
 import { updateTokens, verifyRefresh } from './token.service';
 
-export const signUp = async (login: string, password: string): Promise<UserType | void> => {
+export const signUp = async (
+  login: string,
+  password: string,
+): Promise<UserType | void> => {
   const isRegistered = await User.findOne({ login });
 
   if (isRegistered) {
@@ -35,7 +38,10 @@ type logInReturnType = {
   accessToken: string;
 };
 
-export const logIn = async (login: string, password: string): Promise<logInReturnType> => {
+export const logIn = async (
+  login: string,
+  password: string,
+): Promise<logInReturnType> => {
   const user = await User.findOne({ login });
 
   if (!user) {
@@ -67,15 +73,18 @@ export const logIn = async (login: string, password: string): Promise<logInRetur
 type refreshReturnType = {
   refreshToken: string;
   accessToken: string;
-}
+  accessExpiration: number;
+};
 
-export const refresh = async (refreshToken: string): Promise<refreshReturnType> => {
+export const refresh = async (
+  refreshToken: string,
+): Promise<refreshReturnType> => {
   if (!refreshToken) {
     throw ApiError.UnauthorizedError();
   }
 
   const verifiedToken = verifyRefresh(refreshToken);
-  if (typeof verifiedToken === 'string'|| verifiedToken.type !== 'refresh') {
+  if (typeof verifiedToken === 'string' || verifiedToken.type !== 'refresh') {
     throw ApiError.UnauthorizedError();
   }
 
@@ -84,7 +93,7 @@ export const refresh = async (refreshToken: string): Promise<refreshReturnType> 
     throw ApiError.BadRequest('Token is invalid', '');
   }
 
- return await updateTokens(token.userId, token.tokenId, true);
+  return await updateTokens(token.userId, token.tokenId, true);
 };
 
 export const logOut = async (refreshToken: string): Promise<void> => {
@@ -93,7 +102,7 @@ export const logOut = async (refreshToken: string): Promise<void> => {
   }
 
   const verifiedToken = verifyRefresh(refreshToken);
-  if (typeof verifiedToken === 'string'|| verifiedToken.type !== 'refresh') {
+  if (typeof verifiedToken === 'string' || verifiedToken.type !== 'refresh') {
     throw ApiError.UnauthorizedError();
   }
 
