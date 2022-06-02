@@ -6,7 +6,7 @@ import * as balanceController from '../controllers/balance.controller';
 const balanceRouter: Router = Router();
 
 balanceRouter.post(
-  '/balance',
+  '/createBalance',
   authMiddleware,
   balanceController.createBalance,
 );
