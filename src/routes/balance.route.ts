@@ -11,4 +11,10 @@ balanceRouter.post(
   balanceController.createBalance,
 );
 
+balanceRouter.get(
+  '/getBalances',
+  authMiddleware,
+  balanceController.getBalances,
+);
+
 export default balanceRouter;

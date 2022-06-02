@@ -29,3 +29,19 @@ export const createBalance: ControllerFunction = async (req, res, next) => {
     next(e);
   }
 };
+
+export const getBalances: ControllerFunction = async (req, res, next) => {
+  try {
+    const { userId } = req.body.user;
+
+    const balances = await balanceService.getBalances(userId);
+
+    return res.json({
+      messageEn: 'Balance loaded successfully',
+      messageRu: '',
+      balances,
+    });
+  } catch (e) {
+    next(e);
+  }
+};

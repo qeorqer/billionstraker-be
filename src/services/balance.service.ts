@@ -17,3 +17,8 @@ export const createBalance = async (name: string, amount: number | undefined, us
 
   return newBalance;
 };
+
+export const getBalances = async (userId: string): Promise<balanceType[]> => {
+  const userBalances = await Balance.find({ ownerId: userId });
+  return userBalances;
+};
