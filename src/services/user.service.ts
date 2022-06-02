@@ -1,13 +1,12 @@
-import User from '../models/User.model';
-import ApiError from '../exceptions/api-errors';
-import { UserForReturnType, UserType } from '../interfaces/user.interface';
 import { Types } from 'mongoose';
-import { userDto } from '../dto/user.dto';
 import bcrypt from 'bcrypt';
-import {
-  generateTokenPair,
-  validateRefreshToken,
-} from '../helpers/auth.hellper';
+
+import User from '../models/User.model';
+import Token from '../models/Token.model';
+import ApiError from '../exceptions/api-errors';
+import { UserType } from '../types/user.type';
+import { userDto } from '../dto/user.dto';
+import { updateTokens, verifyRefresh } from './token.service';
 
 export const signUp = async (
   login: string,
@@ -37,6 +36,7 @@ type logInReturnType = {
   user: Partial<UserType>;
   refreshToken: string;
   accessToken: string;
+  accessExpiration: number;
 };
 
 export const logIn = async (
@@ -61,67 +61,66 @@ export const logIn = async (
     );
   }
 
-  const { accessToken, refreshToken } = generateTokenPair(user._id);
+  const tokens = await updateTokens(user._id);
 
-  const returnUser: Partial<UserType> = userDto(user.toObject());
-
-  user.refreshToken = refreshToken;
-  await user.save();
+  const userForReturn: Partial<UserType> = userDto(user.toObject());
 
   return {
-    user: returnUser,
-    refreshToken,
-    accessToken,
+    user: userForReturn,
+    ...tokens,
   };
 };
 
-type logOutReturnType = {
+type refreshReturnType = {
   refreshToken: string;
-};
-
-export const logOut = async (
-  refreshToken: string,
-): Promise<logOutReturnType> => {
-  const user = await User.findOne({ refreshToken });
-
-  if (!user) {
-    throw ApiError.BadRequest('No such token', ' Нет такго токена');
-  }
-
-  user.refreshToken = undefined;
-  await user.save();
-
-  return {
-    refreshToken,
-  };
+  accessToken: string;
+  accessExpiration: number;
+  user: Partial<UserType>;
 };
 
 export const refresh = async (
   refreshToken: string,
-): Promise<logInReturnType> => {
+): Promise<refreshReturnType> => {
   if (!refreshToken) {
     throw ApiError.UnauthorizedError();
   }
 
-  const userData = validateRefreshToken(refreshToken);
-  const user = await User.findOne({ refreshToken });
-
-  if (!userData || !user) {
+  const verifiedToken = verifyRefresh(refreshToken);
+  if (typeof verifiedToken === 'string' || verifiedToken.type !== 'refresh') {
     throw ApiError.UnauthorizedError();
   }
 
-  const { accessToken, refreshToken: newRefresh } = generateTokenPair(user._id);
+  const token = await Token.findOne({ tokenId: verifiedToken.id });
+  if (!token) {
+    throw ApiError.BadRequest('Token is invalid', '');
+  }
 
-  const returnUser: UserForReturnType = userDto(user.toObject());
+  const user = await User.findById(token.userId);
+  if (!user) {
+    throw ApiError.BadRequest('User does not exist', '');
+  }
 
-  user.refreshToken = newRefresh;
-  await user.save();
+  const updatedTokens = await updateTokens(token.userId, token.tokenId, true);
+
+  const userForReturn: Partial<UserType> = userDto(user.toObject());
 
   return {
-    user: returnUser,
-    refreshToken: newRefresh,
-    accessToken,
+    ...updatedTokens,
+    user: userForReturn,
   };
+};
+
+export const logOut = async (refreshToken: string): Promise<void> => {
+  if (!refreshToken) {
+    throw ApiError.UnauthorizedError();
+  }
+
+  const verifiedToken = verifyRefresh(refreshToken);
+  if (typeof verifiedToken === 'string' || verifiedToken.type !== 'refresh') {
+    throw ApiError.UnauthorizedError();
+  }
+
+  await Token.findOneAndRemove({ tokenId: verifiedToken.id });
 };
 
 export const updateBalance = async (

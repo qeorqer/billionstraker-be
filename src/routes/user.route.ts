@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
+
 import * as userController from '../controllers/user.controller';
 import authMiddleware from '../middlewares/auth.middleware';
 
@@ -18,14 +19,14 @@ userRouter.post(
   '/logIn',
   [
     check('login', 'enter normalized email').normalizeEmail().isEmail(),
-    check('password', 'must contain at least 6 symbols').exists(),
+    check('password', 'must contain at least 6 symbols').isLength({ min: 6 }),
   ],
   userController.logIn,
 );
 
-userRouter.post('/logOut', userController.logOut);
+userRouter.get('/refresh',  userController.refresh);
 
-userRouter.get('/refresh', userController.refresh);
+userRouter.post('/logOut', userController.logOut);
 
 userRouter.patch(
   '/setFirstEnter',

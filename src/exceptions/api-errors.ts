@@ -1,3 +1,5 @@
+import { ValidationError } from 'express-validator';
+
 export default class ApiError extends Error {
   messageRu;
   messageEn;
@@ -8,7 +10,7 @@ export default class ApiError extends Error {
     status: number,
     messageEn: string,
     messageRu: string,
-    errors: Error[] = [],
+    errors: Error[] | ValidationError[] = [],
   ) {
     super(messageEn);
     this.status = status;
@@ -25,8 +27,12 @@ export default class ApiError extends Error {
     );
   }
 
-  static BadRequest(messageEn: string, messageRu: string) {
-    return new ApiError(400, messageEn, messageRu);
+  static BadRequest(
+    messageEn: string,
+    messageRu: string,
+    errors: ValidationError[] = [],
+  ) {
+    return new ApiError(400, messageEn, messageRu, errors);
   }
 
   static ServerError(

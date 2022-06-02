@@ -1,5 +1,5 @@
 import { Document, model, Schema } from 'mongoose';
-import { categoryType } from '../interfaces/category.interface';
+import { categoryType } from '../types/category.type';
 
 const schema: Schema = new Schema({
   nameEn: { type: String, required: true },

@@ -13,7 +13,7 @@ export const getGeneralStatistic: ControllerFunction = async (
   next,
 ) => {
   try {
-    const { id: userId } = req.body.user;
+    const { userId } = req.body.user;
 
     const statistic = await statisticService.getGeneralStatistic(userId);
 
@@ -29,7 +29,7 @@ export const getGeneralStatistic: ControllerFunction = async (
 
 export const getWholeStatistic: ControllerFunction = async (req, res, next) => {
   try {
-    const { id: userId } = req.body.user;
+    const { userId } = req.body.user;
 
     const statistic = await statisticService.getWholeStatistic(userId);
 
@@ -49,7 +49,7 @@ export const getStatisticForRange: ControllerFunction = async (
   next,
 ) => {
   try {
-    const { id: userId } = req.body.user;
+    const { userId } = req.body.user;
     const { from, to } = req.body;
 
     const statistic = await statisticService.getStatisticForRange(

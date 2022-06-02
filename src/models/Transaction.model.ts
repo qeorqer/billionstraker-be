@@ -1,5 +1,5 @@
 import { Document, model, Schema, Types } from 'mongoose';
-import { TransactionType } from '../interfaces/transaction.interface';
+import { TransactionType } from '../types/transaction.type';
 
 const schema: Schema = new Schema({
   title: { type: String, required: true },
