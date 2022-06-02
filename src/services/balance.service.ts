@@ -1,13 +1,19 @@
-import Category from '../models/Category.model';
+import Balance from '../models/Balance.model';
 import ApiError from '../exceptions/api-errors';
-import { categoryType } from '../types/category.type';
+import { balanceType } from '../types/balance.type';
 
-export const createBalance = async (): Promise<categoryType[]> => {
-  const categories = await Category.find();
+export const createBalance = async (name: string, amount: number | undefined, userId: string): Promise<balanceType> => {
+  const balance = await Balance.findOne({ name, ownerId: userId });
 
-  if (!categories) {
-    throw ApiError.ServerError('There is no categories', 'Нет категорий');
+  if (balance) {
+    throw ApiError.BadRequest('Balance with this name already exists', '');
   }
 
-  return categories;
+ const newBalance = await Balance.create({
+    name,
+    amount,
+    ownerId: userId,
+  });
+
+  return newBalance;
 };

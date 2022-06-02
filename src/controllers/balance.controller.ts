@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import * as balanceService from '../services/balance.service';
+import ApiError from '../exceptions/api-errors';
 
 type ControllerFunction = (
   req: Request,
@@ -10,11 +11,19 @@ type ControllerFunction = (
 
 export const createBalance: ControllerFunction = async (req, res, next) => {
   try {
-    const categories = await balanceService.createBalance();
+    const { name, amount }: { name: string; amount: number } = req.body;
+    const { userId } = req.body.user;
+
+    if (!name) {
+      return next(ApiError.BadRequest('Name is required', ''));
+    }
+
+    const balance = await balanceService.createBalance(name, amount, userId);
+
     return res.json({
-      messageEn: 'Сategories loaded successfully',
-      messageRu: 'Категории успешно загружены',
-      categories,
+      messageEn: 'Balance created successfully',
+      messageRu: '',
+      balance,
     });
   } catch (e) {
     next(e);
