@@ -29,9 +29,8 @@ export const getUserTransactions: ControllerFunction = async (
   next,
 ) => {
   try {
-    const { id: userId } = req.body.user;
-    const { limit, numberToSkip }: { limit: number; numberToSkip: number } =
-      req.body;
+    const { userId } = req.body.user;
+    const { limit, numberToSkip }: { limit: number; numberToSkip: number } = req.body;
 
     const transactionRes = await transactionService.getUserTransactions(
       userId,

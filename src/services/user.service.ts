@@ -36,6 +36,7 @@ type logInReturnType = {
   user: Partial<UserType>;
   refreshToken: string;
   accessToken: string;
+  accessExpiration: number;
 };
 
 export const logIn = async (
@@ -74,6 +75,7 @@ type refreshReturnType = {
   refreshToken: string;
   accessToken: string;
   accessExpiration: number;
+  user: Partial<UserType>;
 };
 
 export const refresh = async (
@@ -93,7 +95,19 @@ export const refresh = async (
     throw ApiError.BadRequest('Token is invalid', '');
   }
 
-  return await updateTokens(token.userId, token.tokenId, true);
+  const user = await User.findById(token.userId);
+  if (!user) {
+    throw ApiError.BadRequest('User does not exist', '');
+  }
+
+  const updatedTokens = await updateTokens(token.userId, token.tokenId, true);
+
+  const userForReturn: Partial<UserType> = userDto(user.toObject());
+
+  return {
+    ...updatedTokens,
+    user: userForReturn,
+  };
 };
 
 export const logOut = async (refreshToken: string): Promise<void> => {

@@ -70,6 +70,7 @@ export const logIn: ControllerFunction = async (req, res, next) => {
 export const refresh: ControllerFunction = async (req, res, next) => {
   try {
     const { refreshToken } = req.cookies;
+
     const result = await userService.refresh(refreshToken);
 
     res.cookie('refreshToken', result.refreshToken, {
@@ -96,7 +97,7 @@ export const logOut: ControllerFunction = async (req, res, next) => {
 
 export const setFirstEnter: ControllerFunction = async (req, res, next) => {
   try {
-    const { id: userId } = req.body.user;
+    const { userId } = req.body.user;
 
     const user = await userService.setFirstEnter(userId);
 
@@ -112,7 +113,7 @@ export const setFirstEnter: ControllerFunction = async (req, res, next) => {
 
 export const setInitialValues: ControllerFunction = async (req, res, next) => {
   try {
-    const { id: userId } = req.body.user;
+    const { userId } = req.body.user;
     const { card, cash }: { card: number; cash: number } = req.body;
 
     const user = await userService.setInitialValues(userId, card, cash);
