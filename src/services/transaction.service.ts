@@ -1,31 +1,32 @@
-import Transaction from '../models/Transaction.model';
-import ApiError from '../exceptions/api-errors';
-import { TransactionType } from '../types/transaction.type';
-import * as userService from '../services/user.service';
 import { Types } from 'mongoose';
-import { UserType } from '../types/user.type';
 
-export const addTransaction = async (
+import Transaction from '../models/Transaction.model';
+import Balance, { MongooseBalance } from '../models/Balance.model';
+import { TransactionType } from '../types/transaction.type';
+import ApiError from '../exceptions/api-errors';
+
+export const createTransaction = async (
   transaction: TransactionType,
-): Promise<Partial<UserType>> => {
-  const newTransaction = new Transaction(transaction);
-  const result = await newTransaction.save();
+  balanceId: string,
+  userId: string,
+): Promise<TransactionType> => {
+  const balance: MongooseBalance | null = await Balance.findById(balanceId);
 
-  if (!result) {
-    throw ApiError.ServerError(
-      'Failed to create transaction',
-      'Ошибка при создании транзакции',
-    );
+  if (!balance) {
+    throw ApiError.BadRequest('Balance with such id does not exist', '');
   }
 
-  const user = await userService.updateBalance(
-    transaction.ownerId,
-    transaction.sum,
-    transaction.isExpense,
-    transaction.isCard,
-  );
+  if (balance.amount < transaction.sum) {
+    throw ApiError.BadRequest('The balance does not have enough money', '');
+  }
 
-  return user;
+  const newTransaction = await Transaction.create({
+    ...transaction,
+    balance: balance.name,
+    ownerId: userId,
+  });
+
+  return newTransaction;
 };
 
 type getAllTransactionsReturnType = {
@@ -39,10 +40,10 @@ export const getUserTransactions = async (
   numberToSkip: number,
 ): Promise<getAllTransactionsReturnType | null> => {
   const transactions = await Transaction.find({ ownerId: userId })
-    .sort({ date: -1 })
-    .skip(numberToSkip)
-    .limit(limit)
-    .exec();
+  .sort({ date: -1 })
+  .skip(numberToSkip)
+  .limit(limit)
+  .exec();
 
   if (!transactions) {
     return null;

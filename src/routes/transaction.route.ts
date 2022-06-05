@@ -5,9 +5,9 @@ import * as transactionController from '../controllers/transaction.controller';
 const transactionRouter: Router = Router();
 
 transactionRouter.post(
-  '/addNewTransaction',
+  '/createTransaction',
   authMiddleware,
-  transactionController.addTransaction,
+  transactionController.createTransaction,
 );
 
 transactionRouter.post(

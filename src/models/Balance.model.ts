@@ -8,5 +8,5 @@ const schema: Schema = new Schema({
   ownerId: { type: Types.ObjectId, ref: 'User', required: true },
 });
 
-type MongooseUser = Document & balanceType;
-export default model<MongooseUser>('Balance', schema);
+export type MongooseBalance = Document & balanceType;
+export default model<MongooseBalance>('Balance', schema);
