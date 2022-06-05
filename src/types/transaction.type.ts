@@ -1,9 +1,9 @@
 import { Types } from 'mongoose';
 
 enum transactionTypes {
-  'expense',
-  'profit',
-  'exchange',
+  'expense' = 'expense',
+  'profit' = 'profit',
+  'exchange' = 'exchange',
 }
 
 export type TransactionType = {

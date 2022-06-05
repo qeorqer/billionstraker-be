@@ -13,5 +13,5 @@ const schema: Schema = new Schema({
   date: { type: Date, default: new Date() },
 });
 
-type MongooseUser = Document & TransactionType;
-export default model<MongooseUser>('Transaction', schema);
+type MongooseTransaction = Document & TransactionType;
+export default model<MongooseTransaction>('Transaction', schema);
