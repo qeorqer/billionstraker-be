@@ -10,19 +10,18 @@ type ControllerFunction = (
 
 export const createTransaction: ControllerFunction = async (req, res, next) => {
   try {
-    const { transaction, balanceId } = req.body;
+    const { transaction, balanceId, balanceToSubtractId } = req.body;
     const { userId } = req.body.user;
 
     if (!transaction || !balanceId) {
       return next(ApiError.BadRequest('Transaction and balanceId are required', ''));
     }
 
-    const createdTransaction = await transactionService.createTransaction(transaction, balanceId, userId);
+    const createdTransaction = await transactionService.createTransaction(transaction, balanceId,  userId, balanceToSubtractId);
 
     return res.status(201).json({
       messageEn: 'Transaction created successfully',
-      messageRu: '',
-      transaction: createdTransaction,
+      ...createdTransaction,
     });
   } catch (e) {
     next(e);

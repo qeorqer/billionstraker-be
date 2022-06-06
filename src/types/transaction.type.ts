@@ -10,8 +10,10 @@ export type TransactionType = {
   title: string;
   ownerId: Types.ObjectId;
   sum: number;
+  sumToSubtract?: number;
   category: Types.ObjectId;
   data: Date;
   balance: String,
+  balanceToSubtract?: String,
   transactionType: transactionTypes,
 };

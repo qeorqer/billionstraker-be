@@ -13,35 +13,66 @@ const handleExpense = async (transaction: TransactionType, balance: MongooseBala
 
   balance.amount -= transaction.sum;
   await balance.save();
+
+  return [balance];
 };
 
 const handleProfit = async (transaction: TransactionType, balance: MongooseBalance) => {
   balance.amount += transaction.sum;
   await balance.save();
+
+  return [balance];
+};
+
+const handleExchange = async (transaction: TransactionType, balance: MongooseBalance, balanceToSubtractId: string | undefined) => {
+  if (!transaction.sumToSubtract || !balanceToSubtractId) {
+    throw ApiError.BadRequest('sumToSubtract and balanceToSubtractId are required for exchange operation', '');
+  }
+
+  const balanceToSubtract = await Balance.findById(balanceToSubtractId);
+  if (!balanceToSubtract) {
+    throw ApiError.BadRequest('Balance with such id does not exist', '');
+  }
+
+  if (balanceToSubtract.amount < transaction.sumToSubtract) {
+    throw ApiError.BadRequest('The balance does not have enough money', '');
+  }
+
+  balanceToSubtract.amount -= transaction.sumToSubtract;
+  await balanceToSubtract.save();
+
+  balance.amount += transaction.sum;
+  await balance.save();
+
+  return [balance, balanceToSubtract];
 };
 
 type createTransactionReturnType = {
   transaction: TransactionType,
-  balance: balanceType,
+  balances: balanceType[],
 }
 
 export const createTransaction = async (
   transaction: TransactionType,
   balanceId: string,
   userId: string,
+  balanceToSubtractId?: string,
 ): Promise<createTransactionReturnType> => {
   const balance: MongooseBalance | null = await Balance.findById(balanceId);
-
   if (!balance) {
     throw ApiError.BadRequest('Balance with such id does not exist', '');
   }
 
+  let updatedBalances: balanceType[] = [];
   switch (transaction.transactionType) {
     case 'expense':
-      await handleExpense(transaction, balance);
+      updatedBalances = await handleExpense(transaction, balance);
       break;
     case 'profit':
-      await handleProfit(transaction, balance);
+      updatedBalances = await handleProfit(transaction, balance);
+      break;
+    case 'exchange':
+      updatedBalances = await handleExchange(transaction, balance, balanceToSubtractId);
       break;
     default:
       throw ApiError.BadRequest('Unexpected transaction type', '');
@@ -49,11 +80,10 @@ export const createTransaction = async (
 
   const newTransaction = await Transaction.create({
     ...transaction,
-    balance: balance.name,
     ownerId: userId,
   });
 
-  return { transaction: newTransaction, balance };
+  return { transaction: newTransaction, balances: updatedBalances };
 };
 
 type getAllTransactionsReturnType = {
