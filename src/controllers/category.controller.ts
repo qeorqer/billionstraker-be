@@ -33,10 +33,51 @@ export const createCategory: ControllerFunction = async (req, res, next) => {
     }
 
     const createdCategory = await categoryService.createCategory(category, userId);
+
     return res.json({
       messageEn: 'Category created successfully',
       messageRu: '',
       category: createdCategory,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const updateCategory: ControllerFunction = async (req, res, next) => {
+  try {
+    const { categoryId, category } = req.body;
+
+    if (!categoryId || !category) {
+      return next(ApiError.BadRequest('CategoryId and category are required', ''));
+    }
+
+    const updatedCategory = await categoryService.updateCategory(categoryId, category);
+
+    return res.json({
+      messageEn: 'Category updated successfully',
+      messageRu: '',
+      category: updatedCategory,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const deleteCategory: ControllerFunction = async (req, res, next) => {
+  try {
+    const { categoryId } = req.body;
+
+    if (!categoryId) {
+      return next(ApiError.BadRequest('CategoryId is required', ''));
+    }
+
+    const removedCategoryId = await categoryService.deleteCategory(categoryId);
+
+    return res.json({
+      messageEn: 'Category deleted successfully',
+      messageRu: '',
+      categoryId: removedCategoryId,
     });
   } catch (e) {
     next(e);

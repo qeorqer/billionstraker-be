@@ -16,4 +16,22 @@ categoryRouter.post(
   categoryController.createCategory,
 );
 
+categoryRouter.post(
+  '/createCategory',
+  authMiddleware,
+  categoryController.createCategory,
+);
+
+categoryRouter.patch(
+  '/updateCategory',
+  authMiddleware,
+  categoryController.updateCategory,
+);
+
+categoryRouter.delete(
+  '/deleteCategory',
+  authMiddleware,
+  categoryController.deleteCategory,
+);
+
 export default categoryRouter;

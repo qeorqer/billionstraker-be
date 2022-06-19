@@ -26,3 +26,24 @@ export const createCategory = async (category: categoryType, userId: string): Pr
 
   return newCategory;
 };
+
+export const updateCategory = async (categoryId: string, category: categoryType): Promise<categoryType> => {
+  const updatedCategory = await Category.findByIdAndUpdate(categoryId, { ...category }, { new: true });
+
+  if (!updatedCategory) {
+    throw ApiError.BadRequest('There is no such category', '');
+  }
+
+  return updatedCategory;
+};
+
+export const deleteCategory = async (categoryId: string): Promise<string> => {
+  const categoryToDelete = await Category.findById(categoryId);
+
+  if(!categoryToDelete){
+    throw ApiError.BadRequest('There is no such category', '');
+  }
+
+  await categoryToDelete.remove();
+  return categoryId;
+};
