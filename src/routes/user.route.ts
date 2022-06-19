@@ -24,7 +24,7 @@ userRouter.post(
   userController.logIn,
 );
 
-userRouter.get('/refresh',  userController.refresh);
+userRouter.get('/refresh', userController.refresh);
 
 userRouter.post('/logOut', userController.logOut);
 

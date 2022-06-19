@@ -7,7 +7,7 @@ const schema: Schema = new Schema({
   title: { type: String, required: true },
   ownerId: { type: Types.ObjectId, ref: 'User', required: true },
   sum: { type: Number, required: true },
-  sumToSubtract: {type: Number, required: false},
+  sumToSubtract: { type: Number, required: false },
   balance: { type: String, required: true },
   balanceToSubtract: { type: String, required: false },
   transactionType: { type: String, enum: transactionTypes, required: true },

@@ -13,7 +13,7 @@ export type TransactionType = {
   sumToSubtract?: number;
   category: Types.ObjectId;
   date: Date;
-  balance: String,
-  balanceToSubtract?: String,
-  transactionType: transactionTypes,
+  balance: String;
+  balanceToSubtract?: String;
+  transactionType: transactionTypes;
 };

@@ -6,7 +6,10 @@ import { TransactionType } from '../types/transaction.type';
 import ApiError from '../exceptions/api-errors';
 import { balanceType } from '../types/balance.type';
 
-const handleExpense = async (transaction: TransactionType, balance: MongooseBalance) => {
+const handleExpense = async (
+  transaction: TransactionType,
+  balance: MongooseBalance,
+) => {
   if (balance.amount < transaction.sum) {
     throw ApiError.BadRequest('The balance does not have enough money', '');
   }
@@ -17,16 +20,26 @@ const handleExpense = async (transaction: TransactionType, balance: MongooseBala
   return [balance];
 };
 
-const handleProfit = async (transaction: TransactionType, balance: MongooseBalance) => {
+const handleProfit = async (
+  transaction: TransactionType,
+  balance: MongooseBalance,
+) => {
   balance.amount += transaction.sum;
   await balance.save();
 
   return [balance];
 };
 
-const handleExchange = async (transaction: TransactionType, balance: MongooseBalance, balanceToSubtractId: string | undefined) => {
+const handleExchange = async (
+  transaction: TransactionType,
+  balance: MongooseBalance,
+  balanceToSubtractId: string | undefined,
+) => {
   if (!transaction.sumToSubtract || !balanceToSubtractId) {
-    throw ApiError.BadRequest('sumToSubtract and balanceToSubtractId are required for exchange operation', '');
+    throw ApiError.BadRequest(
+      'sumToSubtract and balanceToSubtractId are required for exchange operation',
+      '',
+    );
   }
 
   const balanceToSubtract = await Balance.findById(balanceToSubtractId);
@@ -48,9 +61,9 @@ const handleExchange = async (transaction: TransactionType, balance: MongooseBal
 };
 
 type createTransactionReturnType = {
-  transaction: TransactionType,
-  balances: balanceType[],
-}
+  transaction: TransactionType;
+  balances: balanceType[];
+};
 
 export const createTransaction = async (
   transaction: TransactionType,
@@ -72,7 +85,11 @@ export const createTransaction = async (
       updatedBalances = await handleProfit(transaction, balance);
       break;
     case 'exchange':
-      updatedBalances = await handleExchange(transaction, balance, balanceToSubtractId);
+      updatedBalances = await handleExchange(
+        transaction,
+        balance,
+        balanceToSubtractId,
+      );
       break;
     default:
       throw ApiError.BadRequest('Unexpected transaction type', '');
@@ -97,10 +114,10 @@ export const getUserTransactions = async (
   numberToSkip: number,
 ): Promise<getAllTransactionsReturnType | null> => {
   const transactions = await Transaction.find({ ownerId: userId })
-  .sort({ date: -1 })
-  .skip(numberToSkip)
-  .limit(limit)
-  .exec();
+    .sort({ date: -1 })
+    .skip(numberToSkip)
+    .limit(limit)
+    .exec();
 
   if (!transactions) {
     return null;

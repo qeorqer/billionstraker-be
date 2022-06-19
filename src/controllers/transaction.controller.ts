@@ -14,10 +14,17 @@ export const createTransaction: ControllerFunction = async (req, res, next) => {
     const { userId } = req.body.user;
 
     if (!transaction || !balanceId) {
-      return next(ApiError.BadRequest('Transaction and balanceId are required', ''));
+      return next(
+        ApiError.BadRequest('Transaction and balanceId are required', ''),
+      );
     }
 
-    const createdTransaction = await transactionService.createTransaction(transaction, balanceId,  userId, balanceToSubtractId);
+    const createdTransaction = await transactionService.createTransaction(
+      transaction,
+      balanceId,
+      userId,
+      balanceToSubtractId,
+    );
 
     return res.status(201).json({
       messageEn: 'Transaction created successfully',
@@ -35,7 +42,8 @@ export const getUserTransactions: ControllerFunction = async (
 ) => {
   try {
     const { userId } = req.body.user;
-    const { limit, numberToSkip }: { limit: number; numberToSkip: number } = req.body;
+    const { limit, numberToSkip }: { limit: number; numberToSkip: number } =
+      req.body;
 
     const transactionRes = await transactionService.getUserTransactions(
       userId,
