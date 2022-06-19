@@ -1,31 +1,106 @@
-import Transaction from '../models/Transaction.model';
-import ApiError from '../exceptions/api-errors';
-import { TransactionType } from '../types/transaction.type';
-import * as userService from '../services/user.service';
 import { Types } from 'mongoose';
-import { UserType } from '../types/user.type';
 
-export const addTransaction = async (
+import Transaction from '../models/Transaction.model';
+import Balance, { MongooseBalance } from '../models/Balance.model';
+import { TransactionType } from '../types/transaction.type';
+import ApiError from '../exceptions/api-errors';
+import { balanceType } from '../types/balance.type';
+
+const handleExpense = async (
   transaction: TransactionType,
-): Promise<Partial<UserType>> => {
-  const newTransaction = new Transaction(transaction);
-  const result = await newTransaction.save();
+  balance: MongooseBalance,
+) => {
+  if (balance.amount < transaction.sum) {
+    throw ApiError.BadRequest('The balance does not have enough money', '');
+  }
 
-  if (!result) {
-    throw ApiError.ServerError(
-      'Failed to create transaction',
-      'Ошибка при создании транзакции',
+  balance.amount -= transaction.sum;
+  await balance.save();
+
+  return [balance];
+};
+
+const handleProfit = async (
+  transaction: TransactionType,
+  balance: MongooseBalance,
+) => {
+  balance.amount += transaction.sum;
+  await balance.save();
+
+  return [balance];
+};
+
+const handleExchange = async (
+  transaction: TransactionType,
+  balance: MongooseBalance,
+  balanceToSubtractId: string | undefined,
+) => {
+  if (!transaction.sumToSubtract || !balanceToSubtractId) {
+    throw ApiError.BadRequest(
+      'sumToSubtract and balanceToSubtractId are required for exchange operation',
+      '',
     );
   }
 
-  const user = await userService.updateBalance(
-    transaction.ownerId,
-    transaction.sum,
-    transaction.isExpense,
-    transaction.isCard,
-  );
+  const balanceToSubtract = await Balance.findById(balanceToSubtractId);
+  if (!balanceToSubtract) {
+    throw ApiError.BadRequest('Balance with such id does not exist', '');
+  }
 
-  return user;
+  if (balanceToSubtract.amount < transaction.sumToSubtract) {
+    throw ApiError.BadRequest('The balance does not have enough money', '');
+  }
+
+  balanceToSubtract.amount -= transaction.sumToSubtract;
+  await balanceToSubtract.save();
+
+  balance.amount += transaction.sum;
+  await balance.save();
+
+  return [balance, balanceToSubtract];
+};
+
+type createTransactionReturnType = {
+  transaction: TransactionType;
+  balances: balanceType[];
+};
+
+export const createTransaction = async (
+  transaction: TransactionType,
+  balanceId: string,
+  userId: string,
+  balanceToSubtractId?: string,
+): Promise<createTransactionReturnType> => {
+  const balance: MongooseBalance | null = await Balance.findById(balanceId);
+  if (!balance) {
+    throw ApiError.BadRequest('Balance with such id does not exist', '');
+  }
+
+  let updatedBalances: balanceType[] = [];
+  switch (transaction.transactionType) {
+    case 'expense':
+      updatedBalances = await handleExpense(transaction, balance);
+      break;
+    case 'profit':
+      updatedBalances = await handleProfit(transaction, balance);
+      break;
+    case 'exchange':
+      updatedBalances = await handleExchange(
+        transaction,
+        balance,
+        balanceToSubtractId,
+      );
+      break;
+    default:
+      throw ApiError.BadRequest('Unexpected transaction type', '');
+  }
+
+  const newTransaction = await Transaction.create({
+    ...transaction,
+    ownerId: userId,
+  });
+
+  return { transaction: newTransaction, balances: updatedBalances };
 };
 
 type getAllTransactionsReturnType = {

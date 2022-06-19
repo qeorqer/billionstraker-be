@@ -1,11 +1,19 @@
 import { Types } from 'mongoose';
 
+enum transactionTypes {
+  'expense' = 'expense',
+  'profit' = 'profit',
+  'exchange' = 'exchange',
+}
+
 export type TransactionType = {
   title: string;
   ownerId: Types.ObjectId;
-  isCard: boolean;
-  isExpense: boolean;
   sum: number;
+  sumToSubtract?: number;
   category: Types.ObjectId;
-  data: Date;
+  date: Date;
+  balance: String;
+  balanceToSubtract?: String;
+  transactionType: transactionTypes;
 };

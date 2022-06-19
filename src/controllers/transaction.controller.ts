@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import * as transactionService from '../services/transaction.service';
+import ApiError from '../exceptions/api-errors';
 
 type ControllerFunction = (
   req: Request,
@@ -7,16 +8,27 @@ type ControllerFunction = (
   next: NextFunction,
 ) => Promise<Response | void>;
 
-export const addTransaction: ControllerFunction = async (req, res, next) => {
+export const createTransaction: ControllerFunction = async (req, res, next) => {
   try {
-    const { transaction } = req.body;
+    const { transaction, balanceId, balanceToSubtractId } = req.body;
+    const { userId } = req.body.user;
 
-    const updatedUser = await transactionService.addTransaction(transaction);
+    if (!transaction || !balanceId) {
+      return next(
+        ApiError.BadRequest('Transaction and balanceId are required', ''),
+      );
+    }
+
+    const createdTransaction = await transactionService.createTransaction(
+      transaction,
+      balanceId,
+      userId,
+      balanceToSubtractId,
+    );
 
     return res.status(201).json({
       messageEn: 'Transaction created successfully',
-      messageRu: 'Транзакция успешно создана',
-      updatedUser,
+      ...createdTransaction,
     });
   } catch (e) {
     next(e);
@@ -30,7 +42,8 @@ export const getUserTransactions: ControllerFunction = async (
 ) => {
   try {
     const { userId } = req.body.user;
-    const { limit, numberToSkip }: { limit: number; numberToSkip: number } = req.body;
+    const { limit, numberToSkip }: { limit: number; numberToSkip: number } =
+      req.body;
 
     const transactionRes = await transactionService.getUserTransactions(
       userId,

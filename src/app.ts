@@ -8,6 +8,7 @@ import userRouter from './routes/user.route';
 import categoryRouter from './routes/category.route';
 import transactionRouter from './routes/transaction.route';
 import statisticRouter from './routes/statistic.route';
+import balanceRouter from './routes/balance.route';
 import errorMiddleware from './middlewares/errors.middleware';
 
 const app: Application = express();
@@ -32,6 +33,7 @@ app.use('/api/user', userRouter);
 app.use('/api/category', categoryRouter);
 app.use('/api/transaction', transactionRouter);
 app.use('/api/statistic', statisticRouter);
+app.use('/api/balance', balanceRouter);
 app.use(errorMiddleware);
 
 const start = () => {
@@ -42,6 +44,7 @@ const start = () => {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
+        useFindAndModify: false,
       },
       (err) => {
         if (err) {
