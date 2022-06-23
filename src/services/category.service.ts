@@ -13,7 +13,7 @@ export const getCategories = async (userId: string): Promise<categoryType[]> => 
 };
 
 export const createCategory = async (category: categoryType, userId: string): Promise<categoryType> => {
-  const isAlreadyExist = await Category.findOne({ name: category.name, ownerId: userId });
+  const isAlreadyExist = await Category.findOne({ name: category.name, ownerId: userId, categoryType: category.categoryType });
 
   if (isAlreadyExist) {
     throw ApiError.BadRequest('Category with this name already belongs to user', '');
