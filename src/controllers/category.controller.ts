@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
-import * as categoryService from '../services/category.service';
-import ApiError from '../exceptions/api-errors';
+import * as categoryService from '@services/category.service';
+import ApiError from '@exceptions/api-errors';
 
 type ControllerFunction = (
   req: Request,

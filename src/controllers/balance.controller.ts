@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
-import * as balanceService from '../services/balance.service';
-import ApiError from '../exceptions/api-errors';
+import * as balanceService from '@services/balance.service';
+import ApiError from '@exceptions/api-errors';
 
 type ControllerFunction = (
   req: Request,

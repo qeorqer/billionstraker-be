@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
-import Transaction from '../models/Transaction.model';
+
+import Transaction from '@models/Transaction.model';
 
 type expenseIncomeType = {
   _id: Types.ObjectId;

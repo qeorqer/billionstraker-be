@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import * as statisticService from '../services/statistic.service';
+
+import * as statisticService from '@services/statistic.service';
 
 type ControllerFunction = (
   req: Request,

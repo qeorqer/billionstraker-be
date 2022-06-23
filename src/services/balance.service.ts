@@ -1,7 +1,6 @@
-import Balance from '../models/Balance.model';
-import ApiError from '../exceptions/api-errors';
-import { balanceType } from '../types/balance.type';
-import Category from '../models/Category.model';
+import Balance from '@models/Balance.model';
+import ApiError from '@exceptions/api-errors';
+import { balanceType } from '@types/balance.type';
 
 export const createBalance = async (
   name: string,

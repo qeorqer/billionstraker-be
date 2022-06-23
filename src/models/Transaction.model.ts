@@ -1,5 +1,6 @@
 import { Document, model, Schema, Types } from 'mongoose';
-import { TransactionType } from '../types/transaction.type';
+
+import { TransactionType } from '@type/transaction.type';
 
 const transactionTypes = ['expense', 'profit', 'exchange'];
 

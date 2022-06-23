@@ -1,10 +1,10 @@
 import { Types } from 'mongoose';
 
-import Transaction from '../models/Transaction.model';
-import Balance, { MongooseBalance } from '../models/Balance.model';
-import { TransactionType } from '../types/transaction.type';
-import ApiError from '../exceptions/api-errors';
-import { balanceType } from '../types/balance.type';
+import Transaction from '@models/Transaction.model';
+import Balance, { MongooseBalance } from '@models/Balance.model';
+import { TransactionType } from '@types/transaction.type';
+import ApiError from '@exceptions/api-errors';
+import { balanceType } from '@types/balance.type';
 
 const handleExpense = async (
   transaction: TransactionType,

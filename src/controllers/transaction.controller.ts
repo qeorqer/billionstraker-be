@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import * as transactionService from '../services/transaction.service';
-import ApiError from '../exceptions/api-errors';
+
+import * as transactionService from '@services/transaction.service';
+import ApiError from '@exceptions/api-errors';
 
 type ControllerFunction = (
   req: Request,

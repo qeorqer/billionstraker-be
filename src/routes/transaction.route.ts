@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import authMiddleware from '../middlewares/auth.middleware';
-import * as transactionController from '../controllers/transaction.controller';
+
+import authMiddleware from '@middlewares/auth.middleware';
+import * as transactionController from '@controllers/transaction.controller';
 
 const transactionRouter: Router = Router();
 

@@ -1,6 +1,6 @@
 import { Document, model, Schema, Types } from 'mongoose';
 
-import { balanceType } from '../types/balance.type';
+import { balanceType } from '@type/balance.type';
 
 const schema: Schema = new Schema({
   name: { type: String, required: true },
