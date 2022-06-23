@@ -45,3 +45,43 @@ export const getBalances: ControllerFunction = async (req, res, next) => {
     next(e);
   }
 };
+
+export const updateBalance: ControllerFunction = async (req, res, next) => {
+  try {
+    const { balanceId, balance } = req.body;
+
+    if (!balanceId || !balance) {
+      return next(ApiError.BadRequest('BalanceId and balance are required', ''));
+    }
+
+    const updatedBalance = await balanceService.updateBalance(balanceId, balance);
+
+    return res.json({
+      messageEn: 'Balance updated successfully',
+      messageRu: '',
+      balance: updatedBalance,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const deleteBalance: ControllerFunction = async (req, res, next) => {
+  try {
+    const { balanceId } = req.body;
+
+    if (!balanceId) {
+      return next(ApiError.BadRequest('BalanceId is required', ''));
+    }
+
+    const removedBalanceId = await balanceService.deleteBalance(balanceId);
+
+    return res.json({
+      messageEn: 'Balance deleted successfully',
+      messageRu: '',
+      balanceId: removedBalanceId,
+    });
+  } catch (e) {
+    next(e);
+  }
+};

@@ -17,4 +17,16 @@ balanceRouter.get(
   balanceController.getBalances,
 );
 
+balanceRouter.patch(
+  '/updateBalance',
+  authMiddleware,
+  balanceController.updateBalance,
+);
+
+balanceRouter.delete(
+  '/deleteBalance',
+  authMiddleware,
+  balanceController.deleteBalance,
+);
+
 export default balanceRouter;
