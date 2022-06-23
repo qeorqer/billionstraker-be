@@ -11,10 +11,12 @@ type ControllerFunction = (
 
 export const getCategories: ControllerFunction = async (req, res, next) => {
   try {
-    const categories = await categoryService.getCategories();
+    const { userId } = req.body.user;
+
+    const categories = await categoryService.getCategories(userId);
     return res.json({
       messageEn: 'Сategories loaded successfully',
-      messageRu: 'Категории успешно загружены',
+      messageRu: '',
       categories,
     });
   } catch (e) {
