@@ -12,7 +12,7 @@ const schema: Schema = new Schema({
   balance: { type: String, required: true },
   balanceToSubtract: { type: String, required: false },
   transactionType: { type: String, enum: transactionTypes, required: true },
-  category: { type: Types.ObjectId, ref: 'Category', required: false },
+  category: { type: String, required: false },
   date: { type: Date, default: new Date(), required: true },
 });
 
