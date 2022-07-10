@@ -1,12 +1,12 @@
 import { Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 
-import User from '../models/User.model';
-import Token from '../models/Token.model';
-import ApiError from '../exceptions/api-errors';
-import { UserType } from '../types/user.type';
-import { userDto } from '../dto/user.dto';
-import { updateTokens, verifyRefresh } from './token.service';
+import User from '@models/User.model';
+import Token from '@models/Token.model';
+import ApiError from '@exceptions/api-errors';
+import { UserType } from '@type/user.type';
+import { userDto } from '@dto/user.dto';
+import { updateTokens, verifyRefresh } from '@services/token.service';
 
 export const signUp = async (
   login: string,

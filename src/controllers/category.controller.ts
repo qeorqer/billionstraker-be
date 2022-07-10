@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
-import * as categoryService from '../services/category.service';
-import ApiError from '../exceptions/api-errors';
+import * as categoryService from '@services/category.service';
+import ApiError from '@exceptions/api-errors';
 
 type ControllerFunction = (
   req: Request,
@@ -29,12 +29,14 @@ export const createCategory: ControllerFunction = async (req, res, next) => {
     const { category } = req.body;
     const { userId } = req.body.user;
 
-
     if (!category) {
       return next(ApiError.BadRequest('Category is required', ''));
     }
 
-    const createdCategory = await categoryService.createCategory(category, userId);
+    const createdCategory = await categoryService.createCategory(
+      category,
+      userId,
+    );
 
     return res.json({
       messageEn: 'Category created successfully',
@@ -51,10 +53,15 @@ export const updateCategory: ControllerFunction = async (req, res, next) => {
     const { categoryId, category } = req.body;
 
     if (!categoryId || !category) {
-      return next(ApiError.BadRequest('CategoryId and category are required', ''));
+      return next(
+        ApiError.BadRequest('CategoryId and category are required', ''),
+      );
     }
 
-    const updatedCategory = await categoryService.updateCategory(categoryId, category);
+    const updatedCategory = await categoryService.updateCategory(
+      categoryId,
+      category,
+    );
 
     return res.json({
       messageEn: 'Category updated successfully',

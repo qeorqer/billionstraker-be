@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
-import ApiError from '../exceptions/api-errors';
-import { verifyAccess } from '../services/token.service';
+import ApiError from '@exceptions/api-errors';
+import { verifyAccess } from '@services/token.service';
 
 export default function (
   req: Request,

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 
-import * as userService from '../services/user.service';
-import ApiError from '../exceptions/api-errors';
+import * as userService from '@services/user.service';
+import ApiError from '@exceptions/api-errors';
 
 type ControllerFunction = (
   req: Request,

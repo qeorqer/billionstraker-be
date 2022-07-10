@@ -1,5 +1,6 @@
-import { Document, model, Schema, Types } from 'mongoose';
-import { UserType } from '../types/user.type';
+import { Document, model, Schema } from 'mongoose';
+
+import { UserType } from '@type/user.type';
 
 const schema: Schema = new Schema({
   login: { type: String, required: true, unique: true },

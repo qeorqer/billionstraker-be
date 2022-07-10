@@ -1,5 +1,6 @@
 import { Document, model, Schema, Types } from 'mongoose';
-import { categoryType } from '../types/category.type';
+
+import { categoryType } from '@type/category.type';
 
 const categoriesType = ['expense', 'profit'];
 

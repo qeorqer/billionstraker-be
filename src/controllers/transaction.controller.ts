@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import * as transactionService from '../services/transaction.service';
-import ApiError from '../exceptions/api-errors';
+
+import * as transactionService from '@services/transaction.service';
+import ApiError from '@exceptions/api-errors';
+import { FilteringOptions } from '@type/transaction.type';
 
 type ControllerFunction = (
   req: Request,
@@ -35,6 +37,12 @@ export const createTransaction: ControllerFunction = async (req, res, next) => {
   }
 };
 
+type getUserTransactionsReqBodyType = {
+  limit: number;
+  numberToSkip: number;
+  filteringOptions: FilteringOptions;
+};
+
 export const getUserTransactions: ControllerFunction = async (
   req,
   res,
@@ -42,13 +50,17 @@ export const getUserTransactions: ControllerFunction = async (
 ) => {
   try {
     const { userId } = req.body.user;
-    const { limit, numberToSkip }: { limit: number; numberToSkip: number } =
-      req.body;
+    const {
+      limit,
+      numberToSkip,
+      filteringOptions,
+    }: getUserTransactionsReqBodyType = req.body;
 
     const transactionRes = await transactionService.getUserTransactions(
       userId,
       limit,
       numberToSkip,
+      filteringOptions,
     );
 
     if (!transactionRes) {
