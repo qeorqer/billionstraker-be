@@ -27,8 +27,15 @@ export const getBalances = async (userId: string): Promise<balanceType[]> => {
   return userBalances;
 };
 
-export const updateBalance = async (balanceId: string, balance: balanceType): Promise<balanceType> => {
-  const updatedBalance = await Balance.findByIdAndUpdate(balanceId, { ...balance }, { new: true });
+export const updateBalance = async (
+  balanceId: string,
+  balance: balanceType,
+): Promise<balanceType> => {
+  const updatedBalance = await Balance.findByIdAndUpdate(
+    balanceId,
+    { ...balance },
+    { new: true },
+  );
 
   if (!updatedBalance) {
     throw ApiError.BadRequest('There is no such balance', '');
@@ -40,7 +47,7 @@ export const updateBalance = async (balanceId: string, balance: balanceType): Pr
 export const deleteBalance = async (balanceId: string): Promise<string> => {
   const balanceToDelete = await Balance.findById(balanceId);
 
-  if(!balanceToDelete){
+  if (!balanceToDelete) {
     throw ApiError.BadRequest('There is no such balance', '');
   }
 

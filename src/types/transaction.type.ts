@@ -17,3 +17,9 @@ export type TransactionType = {
   balanceToSubtract?: String;
   transactionType: transactionTypes;
 };
+
+export type FilteringOptions = {
+  shownTransactionsTypes: string;
+  categoriesToShow: string[];
+  balancesToShow: string[];
+};

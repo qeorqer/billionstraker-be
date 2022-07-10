@@ -51,10 +51,15 @@ export const updateBalance: ControllerFunction = async (req, res, next) => {
     const { balanceId, balance } = req.body;
 
     if (!balanceId || !balance) {
-      return next(ApiError.BadRequest('BalanceId and balance are required', ''));
+      return next(
+        ApiError.BadRequest('BalanceId and balance are required', ''),
+      );
     }
 
-    const updatedBalance = await balanceService.updateBalance(balanceId, balance);
+    const updatedBalance = await balanceService.updateBalance(
+      balanceId,
+      balance,
+    );
 
     return res.json({
       messageEn: 'Balance updated successfully',

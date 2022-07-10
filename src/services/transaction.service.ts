@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 
 import Transaction from '@models/Transaction.model';
 import Balance, { MongooseBalance } from '@models/Balance.model';
-import { TransactionType } from '@type/transaction.type';
+import { FilteringOptions, TransactionType } from '@type/transaction.type';
 import ApiError from '@exceptions/api-errors';
 import { balanceType } from '@type/balance.type';
 
@@ -103,6 +103,36 @@ export const createTransaction = async (
   return { transaction: newTransaction, balances: updatedBalances };
 };
 
+type conditionForSearchType = {
+  ownerId: Types.ObjectId;
+  transactionType?: string;
+  balance?: { $in: string[] };
+  category?: { $in: string[] };
+};
+
+const formConditionForSearch = (
+  userId: Types.ObjectId,
+  filteringOptions: FilteringOptions,
+): conditionForSearchType => {
+  const result: conditionForSearchType = {
+    ownerId: userId,
+  };
+
+  if (filteringOptions.shownTransactionsTypes !== 'all transactions') {
+    result.transactionType = filteringOptions.shownTransactionsTypes;
+  }
+
+  if (filteringOptions.balancesToShow.length) {
+    result.balance = { $in: filteringOptions.balancesToShow };
+  }
+
+  if (filteringOptions.categoriesToShow.length) {
+    result.category = { $in: filteringOptions.categoriesToShow };
+  }
+
+  return result;
+};
+
 type getAllTransactionsReturnType = {
   transactions: TransactionType[];
   numberOfTransactions: number;
@@ -112,8 +142,14 @@ export const getUserTransactions = async (
   userId: Types.ObjectId,
   limit: number,
   numberToSkip: number,
+  filteringOptions: {
+    shownTransactionsTypes: string;
+    categoriesToShow: string[];
+    balancesToShow: string[];
+  },
 ): Promise<getAllTransactionsReturnType | null> => {
-  const transactions = await Transaction.find({ ownerId: userId })
+  const conditionsForSearch = formConditionForSearch(userId, filteringOptions);
+  const transactions = await Transaction.find(conditionsForSearch)
     .sort({ date: -1 })
     .skip(numberToSkip)
     .limit(limit)
@@ -123,9 +159,7 @@ export const getUserTransactions = async (
     return null;
   }
 
-  const numberOfTransactions = await Transaction.countDocuments({
-    ownerId: userId,
-  });
+  const numberOfTransactions = await Transaction.countDocuments(conditionsForSearch);
 
   return {
     transactions,
