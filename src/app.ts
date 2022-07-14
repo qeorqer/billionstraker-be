@@ -56,7 +56,10 @@ const start = () => {
       },
     );
   } catch (e) {
-    console.log('Server Error', e?.message);
+    if (e instanceof Error) {
+      console.log('Server Error', e?.message);
+    }
+
     process.exit(1);
   }
 };

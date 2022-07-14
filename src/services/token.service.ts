@@ -8,7 +8,13 @@ export const verifyAccess = (accessToken: string): JwtPayload | string => {
   try {
     return jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET!);
   } catch (error) {
-    throw ApiError.BadRequest(error?.message!, '');
+    let message = 'Verification of access token failed';
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+
+    throw ApiError.BadRequest(message, '');
   }
 };
 
@@ -16,7 +22,13 @@ export const verifyRefresh = (refreshToken: string): JwtPayload | string => {
   try {
     return jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!);
   } catch (error) {
-    throw ApiError.BadRequest(error?.message!, '');
+    let message = 'Verification of refresh token failed';
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+
+    throw ApiError.BadRequest(message, '');
   }
 };
 
@@ -44,11 +56,11 @@ const generateRefreshToken = (): generateRefreshTokenType => {
 };
 
 const replaceDbRefreshToken = async ({
-  newTokenId,
-  oldTokenId,
-  userId,
-  update,
-}: {
+                                       newTokenId,
+                                       oldTokenId,
+                                       userId,
+                                       update,
+                                     }: {
   newTokenId: string;
   oldTokenId: string;
   userId: string;

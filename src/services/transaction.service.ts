@@ -1,6 +1,6 @@
-import { Types } from 'mongoose';
+import { FilterQuery, Types } from 'mongoose';
 
-import Transaction from '@models/Transaction.model';
+import Transaction, { MongooseTransaction } from '@models/Transaction.model';
 import Balance, { MongooseBalance } from '@models/Balance.model';
 import { FilteringOptions, TransactionType } from '@type/transaction.type';
 import ApiError from '@exceptions/api-errors';
@@ -149,7 +149,7 @@ export const getUserTransactions = async (
   },
 ): Promise<getAllTransactionsReturnType | null> => {
   const conditionsForSearch = formConditionForSearch(userId, filteringOptions);
-  const transactions = await Transaction.find(conditionsForSearch)
+  const transactions = await Transaction.find(conditionsForSearch as FilterQuery<MongooseTransaction>)
     .sort({ date: -1 })
     .skip(numberToSkip)
     .limit(limit)
@@ -159,7 +159,7 @@ export const getUserTransactions = async (
     return null;
   }
 
-  const numberOfTransactions = await Transaction.countDocuments(conditionsForSearch);
+  const numberOfTransactions = await Transaction.countDocuments(conditionsForSearch as FilterQuery<MongooseTransaction>);
 
   return {
     transactions,
