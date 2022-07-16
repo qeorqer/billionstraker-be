@@ -17,7 +17,7 @@ export const createTransaction: ControllerFunction = async (req, res, next) => {
 
     if (!transaction || !balanceId) {
       return next(
-        ApiError.BadRequest('Transaction and balanceId are required', ''),
+        ApiError.BadRequest('Transaction and balanceId are required'),
       );
     }
 

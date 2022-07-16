@@ -11,7 +11,7 @@ export const createBalance = async (
   const balance = await Balance.findOne({ name, ownerId: userId });
 
   if (balance) {
-    throw ApiError.BadRequest('Balance with this name already exists', '');
+    throw ApiError.BadRequest('Balance with this name already exists');
   }
 
   const newBalance = await Balance.create({
@@ -36,7 +36,7 @@ export const updateBalance = async (
   const balanceForUpdate = await Balance.findById(balanceId);
 
   if (!balanceForUpdate) {
-    throw ApiError.BadRequest('There is no such balance', '');
+    throw ApiError.BadRequest('There is no such balance');
   }
 
   await Transaction.updateMany(
@@ -46,7 +46,8 @@ export const updateBalance = async (
     },
     {
       balance: balance.name,
-    });
+    },
+  );
 
   balanceForUpdate.overwrite({ ...balance });
   const updatedBalance = await balanceForUpdate.save();
@@ -58,7 +59,7 @@ export const deleteBalance = async (balanceId: string): Promise<string> => {
   const balanceToDelete = await Balance.findById(balanceId);
 
   if (!balanceToDelete) {
-    throw ApiError.BadRequest('There is no such balance', '');
+    throw ApiError.BadRequest('There is no such balance');
   }
 
   await balanceToDelete.remove();

@@ -9,7 +9,7 @@ export const getCategories = async (
   const categories = await Category.find({ ownerId: userId });
 
   if (!categories) {
-    throw ApiError.ServerError('There is no categories', 'Нет категорий');
+    throw ApiError.ServerError('There is no categories');
   }
 
   return categories;
@@ -28,7 +28,6 @@ export const createCategory = async (
   if (isAlreadyExist) {
     throw ApiError.BadRequest(
       'Category with this name already belongs to user',
-      '',
     );
   }
 
@@ -48,7 +47,7 @@ export const updateCategory = async (
   const categoryForUpdate = await Category.findById(categoryId);
 
   if (!categoryForUpdate) {
-    throw ApiError.BadRequest('There is no such category', '');
+    throw ApiError.BadRequest('There is no such category');
   }
   await Transaction.updateMany(
     {
@@ -57,7 +56,8 @@ export const updateCategory = async (
     },
     {
       category: categoryForUpdate.name,
-    });
+    },
+  );
 
   categoryForUpdate.overwrite({ ...category });
   const updatedCategory = await categoryForUpdate.save();
@@ -69,7 +69,7 @@ export const deleteCategory = async (categoryId: string): Promise<string> => {
   const categoryToDelete = await Category.findById(categoryId);
 
   if (!categoryToDelete) {
-    throw ApiError.BadRequest('There is no such category', '');
+    throw ApiError.BadRequest('There is no such category');
   }
 
   await categoryToDelete.remove();

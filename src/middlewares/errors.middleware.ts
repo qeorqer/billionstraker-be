@@ -12,15 +12,13 @@ export default function (
 
   if (err instanceof ApiError) {
     return res.status(err.status).json({
-      messageEn: err.messageEn || 'Unhandled error.',
-      messageRu: err.messageRu || 'Необработанная ошибка.',
+      message: err.message || 'Unhandled error.',
       errors: err.errors,
     });
   }
 
   return res.status(500).json({
-    messageEn: 'Unhandled error.',
-    messageRu: 'Необработанная ошибка.',
+    message: 'Unhandled error.',
     errors: err.stack,
   });
 }

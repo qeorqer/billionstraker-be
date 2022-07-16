@@ -15,7 +15,7 @@ export const createBalance: ControllerFunction = async (req, res, next) => {
     const { userId } = req.body.user;
 
     if (!name) {
-      return next(ApiError.BadRequest('Name is required', ''));
+      return next(ApiError.BadRequest('Name is required'));
     }
 
     const balance = await balanceService.createBalance(name, amount, userId);
@@ -52,9 +52,7 @@ export const updateBalance: ControllerFunction = async (req, res, next) => {
     const { userId } = req.body.user;
 
     if (!balanceId || !balance) {
-      return next(
-        ApiError.BadRequest('BalanceId and balance are required', ''),
-      );
+      return next(ApiError.BadRequest('BalanceId and balance are required'));
     }
 
     const updatedBalance = await balanceService.updateBalance(
@@ -78,7 +76,7 @@ export const deleteBalance: ControllerFunction = async (req, res, next) => {
     const { balanceId } = req.body;
 
     if (!balanceId) {
-      return next(ApiError.BadRequest('BalanceId is required', ''));
+      return next(ApiError.BadRequest('BalanceId is required'));
     }
 
     const removedBalanceId = await balanceService.deleteBalance(balanceId);

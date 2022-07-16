@@ -30,7 +30,7 @@ export const createCategory: ControllerFunction = async (req, res, next) => {
     const { userId } = req.body.user;
 
     if (!category) {
-      return next(ApiError.BadRequest('Category is required', ''));
+      return next(ApiError.BadRequest('Category is required'));
     }
 
     const createdCategory = await categoryService.createCategory(
@@ -54,9 +54,7 @@ export const updateCategory: ControllerFunction = async (req, res, next) => {
     const { userId } = req.body.user;
 
     if (!categoryId || !category) {
-      return next(
-        ApiError.BadRequest('CategoryId and category are required', ''),
-      );
+      return next(ApiError.BadRequest('CategoryId and category are required'));
     }
 
     const updatedCategory = await categoryService.updateCategory(
@@ -80,7 +78,7 @@ export const deleteCategory: ControllerFunction = async (req, res, next) => {
     const { categoryId } = req.body;
 
     if (!categoryId) {
-      return next(ApiError.BadRequest('CategoryId is required', ''));
+      return next(ApiError.BadRequest('CategoryId is required'));
     }
 
     const removedCategoryId = await categoryService.deleteCategory(categoryId);
