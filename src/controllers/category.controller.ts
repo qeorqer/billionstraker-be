@@ -51,6 +51,7 @@ export const createCategory: ControllerFunction = async (req, res, next) => {
 export const updateCategory: ControllerFunction = async (req, res, next) => {
   try {
     const { categoryId, category } = req.body;
+    const { userId } = req.body.user;
 
     if (!categoryId || !category) {
       return next(
@@ -61,6 +62,7 @@ export const updateCategory: ControllerFunction = async (req, res, next) => {
     const updatedCategory = await categoryService.updateCategory(
       categoryId,
       category,
+      userId,
     );
 
     return res.json({

@@ -1,6 +1,7 @@
 import Category from '@models/Category.model';
 import ApiError from '@exceptions/api-errors';
 import { categoryType } from '@type/category.type';
+import Transaction from '@models/Transaction.model';
 
 export const getCategories = async (
   userId: string,
@@ -42,16 +43,24 @@ export const createCategory = async (
 export const updateCategory = async (
   categoryId: string,
   category: categoryType,
+  userId: string,
 ): Promise<categoryType> => {
-  const updatedCategory = await Category.findByIdAndUpdate(
-    categoryId,
-    { ...category },
-    { new: true },
-  );
+  const categoryForUpdate = await Category.findById(categoryId);
 
-  if (!updatedCategory) {
+  if (!categoryForUpdate) {
     throw ApiError.BadRequest('There is no such category', '');
   }
+  await Transaction.updateMany(
+    {
+      category: categoryForUpdate.name,
+      ownerId: userId,
+    },
+    {
+      category: categoryForUpdate.name,
+    });
+
+  categoryForUpdate.overwrite({ ...category });
+  const updatedCategory = await categoryForUpdate.save();
 
   return updatedCategory;
 };

@@ -1,6 +1,7 @@
 import Balance from '@models/Balance.model';
 import ApiError from '@exceptions/api-errors';
 import { balanceType } from '@type/balance.type';
+import Transaction from '@models/Transaction.model';
 
 export const createBalance = async (
   name: string,
@@ -30,16 +31,25 @@ export const getBalances = async (userId: string): Promise<balanceType[]> => {
 export const updateBalance = async (
   balanceId: string,
   balance: balanceType,
+  userId: string,
 ): Promise<balanceType> => {
-  const updatedBalance = await Balance.findByIdAndUpdate(
-    balanceId,
-    { ...balance },
-    { new: true },
-  );
+  const balanceForUpdate = await Balance.findById(balanceId);
 
-  if (!updatedBalance) {
+  if (!balanceForUpdate) {
     throw ApiError.BadRequest('There is no such balance', '');
   }
+
+  await Transaction.updateMany(
+    {
+      balance: balanceForUpdate.name,
+      ownerId: userId,
+    },
+    {
+      balance: balance.name,
+    });
+
+  balanceForUpdate.overwrite({ ...balance });
+  const updatedBalance = await balanceForUpdate.save();
 
   return updatedBalance;
 };

@@ -49,6 +49,7 @@ export const getBalances: ControllerFunction = async (req, res, next) => {
 export const updateBalance: ControllerFunction = async (req, res, next) => {
   try {
     const { balanceId, balance } = req.body;
+    const { userId } = req.body.user;
 
     if (!balanceId || !balance) {
       return next(
@@ -59,6 +60,7 @@ export const updateBalance: ControllerFunction = async (req, res, next) => {
     const updatedBalance = await balanceService.updateBalance(
       balanceId,
       balance,
+      userId,
     );
 
     return res.json({
