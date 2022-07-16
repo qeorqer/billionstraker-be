@@ -49,13 +49,14 @@ export const updateCategory = async (
   if (!categoryForUpdate) {
     throw ApiError.BadRequest('There is no such category');
   }
+
   await Transaction.updateMany(
     {
       category: categoryForUpdate.name,
       ownerId: userId,
     },
     {
-      category: categoryForUpdate.name,
+      category: category.name,
     },
   );
 

@@ -19,8 +19,7 @@ export const getGeneralStatistic: ControllerFunction = async (
     const statistic = await statisticService.getGeneralStatistic(userId);
 
     return res.json({
-      messageEn: 'Statistic calculated successfully',
-      messageRu: 'Статистика успешно рассчитана',
+      message: 'Statistic calculated successfully',
       statistic,
     });
   } catch (e) {
@@ -35,8 +34,7 @@ export const getWholeStatistic: ControllerFunction = async (req, res, next) => {
     const statistic = await statisticService.getWholeStatistic(userId);
 
     return res.json({
-      messageEn: 'Statistic calculated successfully',
-      messageRu: 'Статистика успешно рассчитана',
+      message: 'Statistic calculated successfully',
       statistic,
     });
   } catch (e) {
@@ -60,8 +58,7 @@ export const getStatisticForRange: ControllerFunction = async (
     );
 
     return res.json({
-      messageEn: 'Statistic calculated successfully',
-      messageRu: 'Статистика успешно рассчитана',
+      message: 'Statistic calculated successfully',
       statistic,
     });
   } catch (e) {

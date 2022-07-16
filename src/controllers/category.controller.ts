@@ -15,8 +15,7 @@ export const getCategories: ControllerFunction = async (req, res, next) => {
 
     const categories = await categoryService.getCategories(userId);
     return res.json({
-      messageEn: 'Сategories loaded successfully',
-      messageRu: '',
+      message: 'Сategories loaded successfully',
       categories,
     });
   } catch (e) {
@@ -39,8 +38,7 @@ export const createCategory: ControllerFunction = async (req, res, next) => {
     );
 
     return res.json({
-      messageEn: 'Category created successfully',
-      messageRu: '',
+      message: 'Category created successfully',
       category: createdCategory,
     });
   } catch (e) {
@@ -64,11 +62,11 @@ export const updateCategory: ControllerFunction = async (req, res, next) => {
     );
 
     return res.json({
-      messageEn: 'Category updated successfully',
-      messageRu: '',
+      message: 'Category updated successfully',
       category: updatedCategory,
     });
   } catch (e) {
+    console.log(e);
     next(e);
   }
 };
@@ -84,8 +82,7 @@ export const deleteCategory: ControllerFunction = async (req, res, next) => {
     const removedCategoryId = await categoryService.deleteCategory(categoryId);
 
     return res.json({
-      messageEn: 'Category deleted successfully',
-      messageRu: '',
+      message: 'Category deleted successfully',
       categoryId: removedCategoryId,
     });
   } catch (e) {

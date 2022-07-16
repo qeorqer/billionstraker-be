@@ -25,8 +25,7 @@ export const signUp: ControllerFunction = async (req, res, next) => {
     await userService.signUp(login, password);
 
     return res.status(201).json({
-      messageEn: 'User created successfully',
-      messageRu: 'Пользователь успешно зарегестрирован',
+      message: 'User created successfully',
     });
   } catch (e) {
     next(e);
@@ -94,8 +93,7 @@ export const setFirstEnter: ControllerFunction = async (req, res, next) => {
     const user = await userService.setFirstEnter(userId);
 
     return res.status(201).json({
-      messageEn: 'isFirstEnter set to false',
-      messageRu: 'isFirstEnter поставлен в значение false',
+      message: 'isFirstEnter set to false',
       user,
     });
   } catch (e) {
@@ -111,8 +109,7 @@ export const setInitialValues: ControllerFunction = async (req, res, next) => {
     const user = await userService.setInitialValues(userId, card, cash);
 
     return res.status(201).json({
-      messageEn: 'initial values where set successfully',
-      messageRu: 'Стартовые значения успешно установлены',
+      message: 'initial values where set successfully',
       user,
     });
   } catch (e) {
