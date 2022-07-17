@@ -14,7 +14,7 @@ export const verifyAccess = (accessToken: string): JwtPayload | string => {
       message = error.message;
     }
 
-    throw ApiError.BadRequest(message, '');
+    throw ApiError.BadRequest(message);
   }
 };
 
@@ -28,7 +28,7 @@ export const verifyRefresh = (refreshToken: string): JwtPayload | string => {
       message = error.message;
     }
 
-    throw ApiError.BadRequest(message, '');
+    throw ApiError.BadRequest(message);
   }
 };
 
@@ -56,11 +56,11 @@ const generateRefreshToken = (): generateRefreshTokenType => {
 };
 
 const replaceDbRefreshToken = async ({
-                                       newTokenId,
-                                       oldTokenId,
-                                       userId,
-                                       update,
-                                     }: {
+  newTokenId,
+  oldTokenId,
+  userId,
+  update,
+}: {
   newTokenId: string;
   oldTokenId: string;
   userId: string;

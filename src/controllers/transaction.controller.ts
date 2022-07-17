@@ -17,7 +17,7 @@ export const createTransaction: ControllerFunction = async (req, res, next) => {
 
     if (!transaction || !balanceId) {
       return next(
-        ApiError.BadRequest('Transaction and balanceId are required', ''),
+        ApiError.BadRequest('Transaction and balanceId are required'),
       );
     }
 
@@ -29,7 +29,7 @@ export const createTransaction: ControllerFunction = async (req, res, next) => {
     );
 
     return res.status(201).json({
-      messageEn: 'Transaction created successfully',
+      message: 'Transaction created successfully',
       ...createdTransaction,
     });
   } catch (e) {
@@ -65,15 +65,13 @@ export const getUserTransactions: ControllerFunction = async (
 
     if (!transactionRes) {
       return res.json({
-        messageEn: 'There is no transactions yet',
-        messageRu: 'Пока что нет транзакций',
+        message: 'There is no transactions yet',
         transactions: [],
       });
     }
 
     return res.json({
-      messageEn: 'Transactions loaded successfully',
-      messageRu: 'Транзакции успешно загружены',
+      message: 'Transactions loaded successfully',
       transactions: transactionRes?.transactions,
       numberOfTransactions: transactionRes?.numberOfTransactions,
     });

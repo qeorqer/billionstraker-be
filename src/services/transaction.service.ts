@@ -11,7 +11,7 @@ const handleExpense = async (
   balance: MongooseBalance,
 ) => {
   if (balance.amount < transaction.sum) {
-    throw ApiError.BadRequest('The balance does not have enough money', '');
+    throw ApiError.BadRequest('The balance does not have enough money');
   }
 
   balance.amount -= transaction.sum;
@@ -38,17 +38,16 @@ const handleExchange = async (
   if (!transaction.sumToSubtract || !balanceToSubtractId) {
     throw ApiError.BadRequest(
       'sumToSubtract and balanceToSubtractId are required for exchange operation',
-      '',
     );
   }
 
   const balanceToSubtract = await Balance.findById(balanceToSubtractId);
   if (!balanceToSubtract) {
-    throw ApiError.BadRequest('Balance with such id does not exist', '');
+    throw ApiError.BadRequest('Balance with such id does not exist');
   }
 
   if (balanceToSubtract.amount < transaction.sumToSubtract) {
-    throw ApiError.BadRequest('The balance does not have enough money', '');
+    throw ApiError.BadRequest('The balance does not have enough money');
   }
 
   balanceToSubtract.amount -= transaction.sumToSubtract;
@@ -73,7 +72,7 @@ export const createTransaction = async (
 ): Promise<createTransactionReturnType> => {
   const balance: MongooseBalance | null = await Balance.findById(balanceId);
   if (!balance) {
-    throw ApiError.BadRequest('Balance with such id does not exist', '');
+    throw ApiError.BadRequest('Balance with such id does not exist');
   }
 
   let updatedBalances: balanceType[] = [];
@@ -92,7 +91,7 @@ export const createTransaction = async (
       );
       break;
     default:
-      throw ApiError.BadRequest('Unexpected transaction type', '');
+      throw ApiError.BadRequest('Unexpected transaction type');
   }
 
   const newTransaction = await Transaction.create({
@@ -149,7 +148,9 @@ export const getUserTransactions = async (
   },
 ): Promise<getAllTransactionsReturnType | null> => {
   const conditionsForSearch = formConditionForSearch(userId, filteringOptions);
-  const transactions = await Transaction.find(conditionsForSearch as FilterQuery<MongooseTransaction>)
+  const transactions = await Transaction.find(
+    conditionsForSearch as FilterQuery<MongooseTransaction>,
+  )
     .sort({ date: -1 })
     .skip(numberToSkip)
     .limit(limit)
@@ -159,7 +160,9 @@ export const getUserTransactions = async (
     return null;
   }
 
-  const numberOfTransactions = await Transaction.countDocuments(conditionsForSearch as FilterQuery<MongooseTransaction>);
+  const numberOfTransactions = await Transaction.countDocuments(
+    conditionsForSearch as FilterQuery<MongooseTransaction>,
+  );
 
   return {
     transactions,

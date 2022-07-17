@@ -15,10 +15,7 @@ export const signUp = async (
   const isRegistered = await User.findOne({ login });
 
   if (isRegistered) {
-    throw ApiError.BadRequest(
-      'User already exists',
-      'Пользователь уже существует',
-    );
+    throw ApiError.BadRequest('User already exists');
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -46,19 +43,13 @@ export const logIn = async (
   const user = await User.findOne({ login });
 
   if (!user) {
-    throw ApiError.BadRequest(
-      'There is no such user',
-      'В системе нет такого пользователя',
-    );
+    throw ApiError.BadRequest('There is no such user');
   }
 
   const isPasswordMatch = await bcrypt.compare(password, user.password);
 
   if (!isPasswordMatch) {
-    throw ApiError.BadRequest(
-      'Incorrect login data',
-      'Некорретные данные при входе',
-    );
+    throw ApiError.BadRequest('Incorrect login data');
   }
 
   const tokens = await updateTokens(user._id);
@@ -92,12 +83,12 @@ export const refresh = async (
 
   const token = await Token.findOne({ tokenId: verifiedToken.id });
   if (!token) {
-    throw ApiError.BadRequest('Token is invalid', '');
+    throw ApiError.BadRequest('Token is invalid');
   }
 
   const user = await User.findById(token.userId);
   if (!user) {
-    throw ApiError.BadRequest('User does not exist', '');
+    throw ApiError.BadRequest('User does not exist');
   }
 
   const updatedTokens = await updateTokens(token.userId, token.tokenId, true);
@@ -143,10 +134,7 @@ export const updateBalance = async (
   );
 
   if (!user) {
-    throw ApiError.BadRequest(
-      'There is no such user',
-      'В базе нет такого пользователя',
-    );
+    throw ApiError.BadRequest('There is no such user');
   }
 
   const userWithoutExtraFields = userDto(user);
@@ -164,10 +152,7 @@ export const setFirstEnter = async (
   );
 
   if (!user) {
-    throw ApiError.BadRequest(
-      'There is no such user',
-      'В базе нет такого пользователя',
-    );
+    throw ApiError.BadRequest('There is no such user');
   }
 
   const userWithoutExtraFields = userDto(user);
@@ -187,10 +172,7 @@ export const setInitialValues = async (
   );
 
   if (!user) {
-    throw ApiError.BadRequest(
-      'There is no such user',
-      'В базе нет такого пользователя',
-    );
+    throw ApiError.BadRequest('There is no such user');
   }
 
   const userWithoutExtraFields = userDto(user);
