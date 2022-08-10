@@ -7,6 +7,8 @@ type expenseIncomeType = {
   total: number;
 };
 
+/*
+  todo: analyze the logic and remove when not needed
 type getGeneralStatisticReturnType = {
   userExpenses: number;
   userExpensesThisMonth: number;
@@ -205,19 +207,23 @@ export const getWholeStatistic = async (
     averageExpensePerMonth: averageExpensePerMonth,
     averageIncomePerMonth: averageIncomePerMonth,
   };
+};*/
+
+type getStatisticsForBalanceReturnType = {
+  expensesInRange: expenseIncomeType[];
+  profitsInRange: expenseIncomeType[];
+  totallySpent: number;
 };
 
-type getStatisticForRangeReturnType = {
-  transactionsInRange: expenseIncomeType[];
-  totalSpent: number;
-};
-
-export const getStatisticForRange = async (
+export const getStatisticsForBalance = async (
   userId: Types.ObjectId,
   from: Date,
   to: Date,
-): Promise<getStatisticForRangeReturnType | null> => {
-  const transactionsInRange: expenseIncomeType[] = await Transaction.aggregate([
+  balance: string,
+): Promise<getStatisticsForBalanceReturnType | null> => {
+  // TODO: optimize db requests
+
+  const expensesInRange: expenseIncomeType[] = await Transaction.aggregate([
     {
       $match: {
         ownerId: new Types.ObjectId(userId),
@@ -225,19 +231,9 @@ export const getStatisticForRange = async (
           $gte: new Date(from),
           $lt: new Date(to),
         },
-        isExpense: true,
+        balance,
+        transactionType: 'expense',
       },
-    },
-    {
-      $lookup: {
-        from: 'categories',
-        localField: 'category',
-        foreignField: '_id',
-        as: 'category',
-      },
-    },
-    {
-      $unwind: '$category',
     },
     {
       $group: {
@@ -249,17 +245,40 @@ export const getStatisticForRange = async (
     },
   ]);
 
-  if (!transactionsInRange) {
+  const profitsInRange: expenseIncomeType[] = await Transaction.aggregate([
+    {
+      $match: {
+        ownerId: new Types.ObjectId(userId),
+        date: {
+          $gte: new Date(from),
+          $lt: new Date(to),
+        },
+        balance,
+        transactionType: 'profit',
+      },
+    },
+    {
+      $group: {
+        _id: '$category',
+        total: {
+          $sum: '$sum',
+        },
+      },
+    },
+  ]);
+
+  if (!expensesInRange) {
     return null;
   }
 
-  const totalSpent = transactionsInRange.reduce(
+  const totallySpent = expensesInRange.reduce(
     (prev, current) => prev + current.total,
     0,
   );
 
   return {
-    transactionsInRange,
-    totalSpent,
+    expensesInRange,
+    profitsInRange,
+    totallySpent,
   };
 };
