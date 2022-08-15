@@ -213,6 +213,7 @@ type getStatisticsForBalanceReturnType = {
   expensesInRange: expenseIncomeType[];
   profitsInRange: expenseIncomeType[];
   totallySpent: number;
+  totallyEarned: number;
 };
 
 export const getStatisticsForBalance = async (
@@ -267,7 +268,7 @@ export const getStatisticsForBalance = async (
     },
   ]);
 
-  if (!expensesInRange) {
+  if (!expensesInRange &&  !profitsInRange) {
     return null;
   }
 
@@ -276,9 +277,15 @@ export const getStatisticsForBalance = async (
     0,
   );
 
+  const totallyEarned = profitsInRange.reduce(
+    (prev, current) => prev + current.total,
+    0,
+  );
+
   return {
     expensesInRange,
     profitsInRange,
     totallySpent,
+    totallyEarned,
   };
 };
