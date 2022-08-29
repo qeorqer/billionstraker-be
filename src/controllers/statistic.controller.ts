@@ -8,53 +8,20 @@ type ControllerFunction = (
   next: NextFunction,
 ) => Promise<Response | void>;
 
-export const getGeneralStatistic: ControllerFunction = async (
+export const getStatisticsForBalance: ControllerFunction = async (
   req,
   res,
   next,
 ) => {
   try {
     const { userId } = req.body.user;
+    const { from, to, balance } = req.body;
 
-    const statistic = await statisticService.getGeneralStatistic(userId);
-
-    return res.json({
-      message: 'Statistic calculated successfully',
-      statistic,
-    });
-  } catch (e) {
-    next(e);
-  }
-};
-
-export const getWholeStatistic: ControllerFunction = async (req, res, next) => {
-  try {
-    const { userId } = req.body.user;
-
-    const statistic = await statisticService.getWholeStatistic(userId);
-
-    return res.json({
-      message: 'Statistic calculated successfully',
-      statistic,
-    });
-  } catch (e) {
-    next(e);
-  }
-};
-
-export const getStatisticForRange: ControllerFunction = async (
-  req,
-  res,
-  next,
-) => {
-  try {
-    const { userId } = req.body.user;
-    const { from, to } = req.body;
-
-    const statistic = await statisticService.getStatisticForRange(
+    const statistic = await statisticService.getStatisticsForBalance(
       userId,
       from,
       to,
+      balance,
     );
 
     return res.json({

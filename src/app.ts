@@ -33,7 +33,7 @@ app.use(express.json());
 app.use('/api/user', userRouter);
 app.use('/api/category', categoryRouter);
 app.use('/api/transaction', transactionRouter);
-app.use('/api/statistic', statisticRouter);
+app.use('/api/statistics', statisticRouter);
 app.use('/api/balance', balanceRouter);
 app.use(errorMiddleware);
 
