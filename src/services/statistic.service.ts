@@ -77,7 +77,6 @@ export const getStatisticsForBalance = async (
     total: Number(item.total.toFixed(2)),
   }));
 
-
   if (!expensesInRange && !profitsInRange) {
     return null;
   }

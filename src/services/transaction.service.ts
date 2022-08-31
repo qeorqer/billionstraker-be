@@ -51,7 +51,10 @@ const handleExchange = async (
     throw ApiError.BadRequest('The balance does not have enough money');
   }
 
-  balanceToSubtract.amount = Decimal.sub(balanceToSubtract.amount, transaction.sumToSubtract).toNumber();
+  balanceToSubtract.amount = Decimal.sub(
+    balanceToSubtract.amount,
+    transaction.sumToSubtract,
+  ).toNumber();
   await balanceToSubtract.save();
 
   balance.amount = Decimal.add(balance.amount, transaction.sum).toNumber();
