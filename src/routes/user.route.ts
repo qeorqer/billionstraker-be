@@ -34,10 +34,4 @@ userRouter.patch(
   userController.setFirstEnter,
 );
 
-userRouter.patch(
-  '/setInitialValues',
-  authMiddleware,
-  userController.setInitialValues,
-);
-
 export default userRouter;

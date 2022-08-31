@@ -114,60 +114,12 @@ export const logOut = async (refreshToken: string): Promise<void> => {
   await Token.findOneAndRemove({ tokenId: verifiedToken.id });
 };
 
-export const updateBalance = async (
-  userId: Types.ObjectId,
-  sum: number,
-  isExpense: boolean,
-  isCard: boolean,
-): Promise<Partial<UserType>> => {
-  const numToIncrease: number = isExpense ? sum * -1 : sum;
-  const objectToUpdate = isCard
-    ? { card: numToIncrease }
-    : { cash: numToIncrease };
-
-  const user = await User.findByIdAndUpdate(
-    userId,
-    {
-      $inc: objectToUpdate,
-    },
-    { new: true },
-  );
-
-  if (!user) {
-    throw ApiError.BadRequest('There is no such user');
-  }
-
-  const userWithoutExtraFields = userDto(user);
-
-  return userWithoutExtraFields;
-};
-
 export const setFirstEnter = async (
   userId: Types.ObjectId,
 ): Promise<Partial<UserType>> => {
   const user = await User.findByIdAndUpdate(
     userId,
     { isFirstEnter: false },
-    { new: true },
-  );
-
-  if (!user) {
-    throw ApiError.BadRequest('There is no such user');
-  }
-
-  const userWithoutExtraFields = userDto(user);
-
-  return userWithoutExtraFields;
-};
-
-export const setInitialValues = async (
-  userId: Types.ObjectId,
-  card: number,
-  cash: number,
-): Promise<Partial<UserType>> => {
-  const user = await User.findByIdAndUpdate(
-    userId,
-    { $set: { card: String(card), cash: String(cash) } },
     { new: true },
   );
 

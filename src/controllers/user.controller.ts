@@ -100,19 +100,3 @@ export const setFirstEnter: ControllerFunction = async (req, res, next) => {
     next(e);
   }
 };
-
-export const setInitialValues: ControllerFunction = async (req, res, next) => {
-  try {
-    const { userId } = req.body.user;
-    const { card, cash }: { card: number; cash: number } = req.body;
-
-    const user = await userService.setInitialValues(userId, card, cash);
-
-    return res.status(201).json({
-      message: 'initial values where set successfully',
-      user,
-    });
-  } catch (e) {
-    next(e);
-  }
-};
