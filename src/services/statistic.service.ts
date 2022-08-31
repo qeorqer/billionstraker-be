@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import Decimal from 'decimal.js';
 
 import Transaction from '@models/Transaction.model';
 
@@ -224,7 +225,7 @@ export const getStatisticsForBalance = async (
 ): Promise<getStatisticsForBalanceReturnType | null> => {
   // TODO: optimize db requests
 
-  const expensesInRange: expenseIncomeType[] = await Transaction.aggregate([
+  let expensesInRange: expenseIncomeType[] = await Transaction.aggregate([
     {
       $match: {
         ownerId: new Types.ObjectId(userId),
@@ -246,7 +247,12 @@ export const getStatisticsForBalance = async (
     },
   ]);
 
-  const profitsInRange: expenseIncomeType[] = await Transaction.aggregate([
+  expensesInRange = expensesInRange.map((item) => ({
+    ...item,
+    total: Number(item.total.toFixed(2)),
+  }));
+
+  let profitsInRange: expenseIncomeType[] = await Transaction.aggregate([
     {
       $match: {
         ownerId: new Types.ObjectId(userId),
@@ -268,17 +274,23 @@ export const getStatisticsForBalance = async (
     },
   ]);
 
-  if (!expensesInRange &&  !profitsInRange) {
+  profitsInRange = profitsInRange.map((item) => ({
+    ...item,
+    total: Number(item.total.toFixed(2)),
+  }));
+
+
+  if (!expensesInRange && !profitsInRange) {
     return null;
   }
 
   const totallySpent = expensesInRange.reduce(
-    (prev, current) => prev + current.total,
+    (prev, current) => Decimal.add(prev, current.total).toNumber(),
     0,
   );
 
   const totallyEarned = profitsInRange.reduce(
-    (prev, current) => prev + current.total,
+    (prev, current) => Decimal.add(prev, current.total).toNumber(),
     0,
   );
 

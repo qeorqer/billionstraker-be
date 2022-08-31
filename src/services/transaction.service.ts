@@ -1,4 +1,5 @@
 import { FilterQuery, Types } from 'mongoose';
+import Decimal from 'decimal.js';
 
 import Transaction, { MongooseTransaction } from '@models/Transaction.model';
 import Balance, { MongooseBalance } from '@models/Balance.model';
@@ -14,7 +15,7 @@ const handleExpense = async (
     throw ApiError.BadRequest('The balance does not have enough money');
   }
 
-  balance.amount -= transaction.sum;
+  balance.amount = Decimal.sub(balance.amount, transaction.sum).toNumber();
   await balance.save();
 
   return [balance];
@@ -24,7 +25,7 @@ const handleProfit = async (
   transaction: TransactionType,
   balance: MongooseBalance,
 ) => {
-  balance.amount += transaction.sum;
+  balance.amount = Decimal.add(balance.amount, transaction.sum).toNumber();
   await balance.save();
 
   return [balance];
@@ -50,10 +51,10 @@ const handleExchange = async (
     throw ApiError.BadRequest('The balance does not have enough money');
   }
 
-  balanceToSubtract.amount -= transaction.sumToSubtract;
+  balanceToSubtract.amount = Decimal.sub(balanceToSubtract.amount, transaction.sumToSubtract).toNumber();
   await balanceToSubtract.save();
 
-  balance.amount += transaction.sum;
+  balance.amount = Decimal.add(balance.amount, transaction.sum).toNumber();
   await balance.save();
 
   return [balance, balanceToSubtract];
