@@ -5,22 +5,10 @@ import * as statisticController from '@controllers/statistic.controller';
 
 const statisticRouter: Router = Router();
 
-statisticRouter.get(
-  '/getGeneralStatistic',
-  authMiddleware,
-  statisticController.getGeneralStatistic,
-);
-
-statisticRouter.get(
-  '/getWholeStatistic',
-  authMiddleware,
-  statisticController.getWholeStatistic,
-);
-
 statisticRouter.post(
-  '/getStatisticForRange',
+  '/getStatisticsForBalance',
   authMiddleware,
-  statisticController.getStatisticForRange,
+  statisticController.getStatisticsForBalance,
 );
 
 export default statisticRouter;
