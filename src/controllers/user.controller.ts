@@ -22,11 +22,16 @@ export const signUp: ControllerFunction = async (req, res, next) => {
 
     const { login, password }: { login: string; password: string } = req.body;
 
-    await userService.signUp(login, password);
+    const authRes = await userService.signUp(login, password);
 
-    return res.status(201).json({
-      message: 'User created successfully',
+    res.cookie('refreshToken', authRes.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
     });
+
+    return res.status(201).json(authRes);
   } catch (e) {
     next(e);
   }
