@@ -34,7 +34,7 @@ export const verifyRefresh = (refreshToken: string): JwtPayload | string => {
 
 const generateAccessToken = (userId: string): string => {
   return jwt.sign({ userId, type: 'access' }, process.env.JWT_ACCESS_SECRET!, {
-    expiresIn: '15d',
+    expiresIn: '15m',
   });
 };
 
