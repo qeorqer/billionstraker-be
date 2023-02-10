@@ -8,10 +8,17 @@ import { UserType } from '@type/user.type';
 import { userDto } from '@dto/user.dto';
 import { updateTokens, verifyRefresh } from '@services/token.service';
 
+type AuthReturnType = {
+  user: Partial<UserType>;
+  refreshToken: string;
+  accessToken: string;
+  accessExpiration: number;
+};
+
 export const signUp = async (
   login: string,
   password: string,
-): Promise<UserType | void> => {
+): Promise<AuthReturnType> => {
   const isRegistered = await User.findOne({ login });
 
   if (isRegistered) {
@@ -25,21 +32,19 @@ export const signUp = async (
     created: new Date(),
   });
 
-  await user.save();
-  return user;
-};
+  const tokens = await updateTokens(user._id);
 
-type logInReturnType = {
-  user: Partial<UserType>;
-  refreshToken: string;
-  accessToken: string;
-  accessExpiration: number;
+  await user.save();
+  return {
+    user,
+    ...tokens
+  };
 };
 
 export const logIn = async (
   login: string,
   password: string,
-): Promise<logInReturnType> => {
+): Promise<AuthReturnType> => {
   const user = await User.findOne({ login });
 
   if (!user) {
