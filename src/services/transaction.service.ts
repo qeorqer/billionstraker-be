@@ -155,7 +155,7 @@ export const getUserTransactions = async (
   const transactions = await Transaction.find(
     conditionsForSearch as FilterQuery<MongooseTransaction>,
   )
-    .sort({ date: -1 })
+    .sort({ date: -1, _id: -1 })
     .skip(numberToSkip)
     .limit(limit)
     .exec();
