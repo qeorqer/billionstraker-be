@@ -17,4 +17,10 @@ transactionRouter.post(
   transactionController.getUserTransactions,
 );
 
+transactionRouter.delete(
+  '/deleteTransaction',
+  authMiddleware,
+  transactionController.deleteTransaction,
+);
+
 export default transactionRouter;

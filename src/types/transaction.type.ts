@@ -13,8 +13,8 @@ export type TransactionType = {
   sumToSubtract?: number;
   category: String;
   date: Date;
-  balance: String;
-  balanceToSubtract?: String;
+  balance: string;
+  balanceToSubtract?: string;
   transactionType: transactionTypes;
 };
 

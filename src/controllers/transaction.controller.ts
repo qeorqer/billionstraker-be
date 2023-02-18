@@ -37,6 +37,28 @@ export const createTransaction: ControllerFunction = async (req, res, next) => {
   }
 };
 
+export const deleteTransaction: ControllerFunction = async (req, res, next) => {
+  try {
+    const { transactionId } = req.body;
+    const { userId } = req.body.user;
+
+    if (!transactionId) {
+      return next(
+        ApiError.BadRequest('transactionId is required'),
+      );
+    }
+
+    const removedTransactionId = await transactionService.deleteTransaction(transactionId, userId);
+
+    return res.status(200).json({
+      message: 'Transaction removed successfully',
+      ...removedTransactionId,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 type getUserTransactionsReqBodyType = {
   limit: number;
   numberToSkip: number;

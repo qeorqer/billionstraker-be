@@ -36,6 +36,7 @@ const handleExchange = async (
   balance: MongooseBalance,
   balanceToSubtractId: string | undefined,
 ) => {
+  console.log(balance, balanceToSubtractId);
   if (!transaction.sumToSubtract || !balanceToSubtractId) {
     throw ApiError.BadRequest(
       'sumToSubtract and balanceToSubtractId are required for exchange operation',
@@ -155,10 +156,10 @@ export const getUserTransactions = async (
   const transactions = await Transaction.find(
     conditionsForSearch as FilterQuery<MongooseTransaction>,
   )
-    .sort({ date: -1, _id: -1 })
-    .skip(numberToSkip)
-    .limit(limit)
-    .exec();
+  .sort({ date: -1, _id: -1 })
+  .skip(numberToSkip)
+  .limit(limit)
+  .exec();
 
   if (!transactions) {
     return null;
@@ -172,4 +173,54 @@ export const getUserTransactions = async (
     transactions,
     numberOfTransactions,
   };
+};
+
+type deleteTransactionReturnType = {
+  transactionId: string;
+  balances: balanceType[];
+};
+
+export const deleteTransaction = async (
+  transactionId: string,
+  userId: string,
+): Promise<deleteTransactionReturnType> => {
+  const transaction: TransactionType | null = await Transaction.findById(transactionId);
+  if (!transaction) {
+    throw ApiError.BadRequest('Transaction with such id does not exist');
+  }
+
+  const balanceToSubtract = await Balance.findOne({ name: transaction.balance, ownerId: userId });
+
+  let updatedBalances: balanceType[] = [];
+  switch (transaction.transactionType) {
+    case 'expense':
+      if (balanceToSubtract) {
+        updatedBalances = await handleProfit(transaction, balanceToSubtract);
+      }
+      break;
+    case 'profit':
+      if (balanceToSubtract) {
+        updatedBalances = await handleExpense(transaction, balanceToSubtract);
+      }
+      break;
+    case 'exchange':
+      if (balanceToSubtract) {
+        const balanceToAdd = await Balance.findOne({ name: transaction.balanceToSubtract!, ownerId: userId });
+
+        if (balanceToAdd) {
+          updatedBalances = await handleExchange(
+            transaction,
+            balanceToSubtract,
+            balanceToAdd._id!,
+          );
+        }
+      }
+      break;
+    default:
+      throw ApiError.BadRequest('Unexpected transaction type');
+  }
+
+  await Transaction.findByIdAndDelete(transactionId);
+
+  return { transactionId, balances: updatedBalances };
 };
