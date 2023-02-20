@@ -23,4 +23,10 @@ transactionRouter.delete(
   transactionController.deleteTransaction,
 );
 
+transactionRouter.patch(
+  '/editTransaction',
+  authMiddleware,
+  transactionController.editTransaction,
+);
+
 export default transactionRouter;

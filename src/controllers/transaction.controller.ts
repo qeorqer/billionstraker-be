@@ -59,6 +59,33 @@ export const deleteTransaction: ControllerFunction = async (req, res, next) => {
   }
 };
 
+export const editTransaction: ControllerFunction = async (req, res, next) => {
+  try {
+    const { transaction, balanceId, balanceToSubtractId } = req.body;
+    const { userId } = req.body.user;
+
+    if (!transaction || !balanceId) {
+      return next(
+        ApiError.BadRequest('Transaction and balanceId are required'),
+      );
+    }
+
+    const updatedTransactionData = await transactionService.editTransaction(
+      transaction,
+      balanceId,
+      userId,
+      balanceToSubtractId,
+    );
+
+    return res.status(200).json({
+      message: 'Transaction updated successfully',
+      ...updatedTransactionData,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 type getUserTransactionsReqBodyType = {
   limit: number;
   numberToSkip: number;

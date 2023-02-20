@@ -7,6 +7,7 @@ enum transactionTypes {
 }
 
 export type TransactionType = {
+  _id?: string;
   title: string;
   ownerId: Types.ObjectId;
   sum: number;
