@@ -62,6 +62,39 @@ const handleExchange = async (
   return [balance, balanceToSubtract];
 };
 
+const handleRevertExchange = async (
+  transaction: TransactionType,
+  balanceToAdd: MongooseBalance,
+  balanceToSubtractId: string | undefined,
+) => {
+  if (!transaction.sumToSubtract || !balanceToSubtractId) {
+    throw ApiError.BadRequest(
+      'sumToSubtract and balanceToSubtractId are required for exchange operation',
+    );
+  }
+
+  const balanceToSubtract = await Balance.findById(balanceToSubtractId);
+  if (!balanceToSubtract) {
+    throw ApiError.BadRequest('Balance with such id does not exist');
+  }
+
+  console.log(balanceToAdd, balanceToSubtract);
+  if (balanceToSubtract.amount < transaction.sum) {
+    throw ApiError.BadRequest('The balance does not have enough money');
+  }
+
+  balanceToSubtract.amount = Decimal.sub(
+    balanceToSubtract.amount,
+    transaction.sum,
+  ).toNumber();
+  await balanceToSubtract.save();
+
+  balanceToAdd.amount = Decimal.add(balanceToAdd.amount, transaction.sumToSubtract).toNumber();
+  await balanceToAdd.save();
+
+  return [balanceToAdd, balanceToSubtract];
+};
+
 type createTransactionReturnType = {
   transaction: TransactionType;
   balances: MongooseBalance[];
@@ -211,10 +244,10 @@ const revertBalances = async (transaction: TransactionType, userId: string): Pro
         const balanceToAdd = await Balance.findOne({ name: transaction.balanceToSubtract!, ownerId: userId });
 
         if (balanceToAdd) {
-          updatedBalances = await handleExchange(
+          updatedBalances = await handleRevertExchange(
             transaction,
-            balanceToSubtract,
-            balanceToAdd._id!,
+            balanceToAdd,
+            balanceToSubtract._id,
           );
         }
       }
