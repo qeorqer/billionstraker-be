@@ -25,6 +25,29 @@ export const createBalance = async (
 
 export const getBalances = async (userId: string): Promise<balanceType[]> => {
   const userBalances = await Balance.find({ ownerId: userId });
+
+  if (userBalances.length) {
+    const balancesCounts: Array<{ name: string, count: number }> = await Promise.all(userBalances.map(async ({ name }) => {
+      const count = await Transaction.find({
+        balance: name,
+      }).countDocuments();
+
+      return { name, count };
+    }));
+
+    userBalances.sort((a, b) => {
+      const aCount = balancesCounts.find((balanceCount) => balanceCount.name === a.name)?.count;
+      const bCount = balancesCounts.find((balanceCount) => balanceCount.name === b.name)?.count;
+
+      if (aCount === undefined || bCount === undefined) {
+        return 0;
+      }
+
+      return bCount - aCount;
+    });
+
+  }
+
   return userBalances;
 };
 
