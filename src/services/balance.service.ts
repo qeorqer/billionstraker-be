@@ -29,7 +29,7 @@ export const getBalances = async (userId: string): Promise<balanceType[]> => {
   if (userBalances.length) {
     const balancesCounts: Array<{ name: string, count: number }> = await Promise.all(userBalances.map(async ({ name }) => {
       const count = await Transaction.find({
-        balance: name,
+        $or: [{balance: name}, {balanceToSubtract: name,}],
       }).countDocuments();
 
       return { name, count };
