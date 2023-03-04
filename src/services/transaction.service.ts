@@ -155,6 +155,10 @@ type conditionForSearchType = {
   transactionType?: string;
   balance?: { $in: string[] };
   category?: { $in: string[] };
+  date?: {
+    $gte: Date,
+    $lt: Date
+  }
 };
 
 const formConditionForSearch = (
@@ -177,6 +181,13 @@ const formConditionForSearch = (
     result.category = { $in: filteringOptions.categoriesToShow };
   }
 
+  if (filteringOptions.from && filteringOptions.to) {
+    result.date = {
+      $gte: new Date(filteringOptions.from),
+      $lt: new Date(filteringOptions.to),
+    };
+  }
+
   return result;
 };
 
@@ -193,6 +204,8 @@ export const getUserTransactions = async (
     shownTransactionsTypes: string;
     categoriesToShow: string[];
     balancesToShow: string[];
+    from: Date,
+    to: Date,
   },
 ): Promise<getAllTransactionsReturnType | null> => {
   const conditionsForSearch = formConditionForSearch(userId, filteringOptions);
