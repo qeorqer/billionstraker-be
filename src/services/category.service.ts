@@ -12,6 +12,25 @@ export const getCategories = async (
     throw ApiError.ServerError('There is no categories');
   }
 
+  const categoriesCounts: Array<{ name: string, count: number }> = await Promise.all(categories.map(async ({ name }) => {
+    const count = await Transaction.find({
+      category: name,
+    }).countDocuments();
+
+    return { name, count };
+  }));
+
+  categories.sort((a, b) => {
+    const aCount = categoriesCounts.find((categoryCount) => categoryCount.name === a.name)?.count;
+    const bCount = categoriesCounts.find((categoryCount) => categoryCount.name === b.name)?.count;
+
+    if (aCount === undefined || bCount === undefined) {
+      return 0;
+    }
+
+    return bCount - aCount;
+  });
+
   return categories;
 };
 

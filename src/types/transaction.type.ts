@@ -23,4 +23,6 @@ export type FilteringOptions = {
   shownTransactionsTypes: string;
   categoriesToShow: string[];
   balancesToShow: string[];
+  from: Date,
+  to: Date,
 };
