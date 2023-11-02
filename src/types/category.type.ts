@@ -1,12 +1,12 @@
 import { Types } from 'mongoose';
 
-enum categoriesTypes {
+enum CategoryTypes {
   'expense' = 'expense',
   'profit' = 'profit',
 }
 
-export type categoryType = {
+export type Category = {
   name: string;
-  categoryType: categoriesTypes;
+  categoryType: CategoryTypes;
   ownerId: Types.ObjectId;
 };

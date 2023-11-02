@@ -1,7 +1,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 
-import Token from '@models/Token.model';
+import TokenModel from '@models/Token.model';
 import ApiError from '@exceptions/api-errors';
 
 export const verifyAccess = (accessToken: string): JwtPayload | string => {
@@ -67,10 +67,10 @@ const replaceDbRefreshToken = async ({
   update: boolean;
 }) => {
   if (update) {
-    await Token.findOneAndRemove({ tokenId: oldTokenId });
+    await TokenModel.findOneAndRemove({ tokenId: oldTokenId });
   }
 
-  return Token.create({ tokenId: newTokenId, userId });
+  return TokenModel.create({ tokenId: newTokenId, userId });
 };
 
 export type updateTokensReturnType = {

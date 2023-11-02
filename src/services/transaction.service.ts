@@ -1,13 +1,13 @@
 import { FilterQuery, Types } from 'mongoose';
 import Decimal from 'decimal.js';
 
-import Transaction, { MongooseTransaction } from '@models/Transaction.model';
+import TransactionModel, { MongooseTransaction } from '@models/Transaction.model';
 import Balance, { MongooseBalance } from '@models/Balance.model';
-import { FilteringOptions, TransactionType } from '@type/transaction.type';
+import { FilteringOptions, Transaction } from '@type/transaction.type';
 import ApiError from '@exceptions/api-errors';
 
 const handleExpense = async (
-  transaction: TransactionType,
+  transaction: Transaction,
   balance: MongooseBalance,
 ) => {
   if (balance.amount < transaction.sum) {
@@ -21,7 +21,7 @@ const handleExpense = async (
 };
 
 const handleProfit = async (
-  transaction: TransactionType,
+  transaction: Transaction,
   balance: MongooseBalance,
 ) => {
   balance.amount = Decimal.add(balance.amount, transaction.sum).toNumber();
@@ -31,7 +31,7 @@ const handleProfit = async (
 };
 
 const handleExchange = async (
-  transaction: TransactionType,
+  transaction: Transaction,
   balance: MongooseBalance,
   balanceToSubtractId: string | undefined,
 ) => {
@@ -63,7 +63,7 @@ const handleExchange = async (
 };
 
 const handleRevertExchange = async (
-  transaction: TransactionType,
+  transaction: Transaction,
   balanceToAdd: MongooseBalance,
   balanceToSubtractId: string | undefined,
 ) => {
@@ -96,12 +96,12 @@ const handleRevertExchange = async (
 };
 
 type createTransactionReturnType = {
-  transaction: TransactionType;
+  transaction: Transaction;
   balances: MongooseBalance[];
 };
 
 const updateBalances = async (
-  transaction: TransactionType,
+  transaction: Transaction,
   balanceId: string,
   balanceToSubtractId: string | undefined,
 ): Promise<MongooseBalance[]> => {
@@ -134,7 +134,7 @@ const updateBalances = async (
 };
 
 export const createTransaction = async (
-  transaction: TransactionType,
+  transaction: Transaction,
   balanceId: string,
   userId: string,
   balanceToSubtractId?: string,
@@ -142,7 +142,7 @@ export const createTransaction = async (
   const updatedBalances = await updateBalances(transaction, balanceId, balanceToSubtractId);
 
 
-  const newTransaction = await Transaction.create({
+  const newTransaction = await TransactionModel.create({
     ...transaction,
     ownerId: userId,
   });
@@ -192,7 +192,7 @@ const formConditionForSearch = (
 };
 
 type getAllTransactionsReturnType = {
-  transactions: TransactionType[];
+  transactions: Transaction[];
   numberOfTransactions: number;
 };
 
@@ -209,7 +209,7 @@ export const getUserTransactions = async (
   },
 ): Promise<getAllTransactionsReturnType | null> => {
   const conditionsForSearch = formConditionForSearch(userId, filteringOptions);
-  const transactions = await Transaction.find(
+  const transactions = await TransactionModel.find(
     conditionsForSearch as FilterQuery<MongooseTransaction>,
   )
   .sort({ date: -1, _id: -1 })
@@ -221,7 +221,7 @@ export const getUserTransactions = async (
     return null;
   }
 
-  const numberOfTransactions = await Transaction.countDocuments(
+  const numberOfTransactions = await TransactionModel.countDocuments(
     conditionsForSearch as FilterQuery<MongooseTransaction>,
   );
 
@@ -236,7 +236,7 @@ type deleteTransactionReturnType = {
   balances: MongooseBalance[];
 };
 
-const revertBalances = async (transaction: TransactionType, userId: string): Promise<MongooseBalance[]> => {
+const revertBalances = async (transaction: Transaction, userId: string): Promise<MongooseBalance[]> => {
   let updatedBalances: MongooseBalance[] = [];
 
   const balanceToSubtract = await Balance.findOne({ name: transaction.balance, ownerId: userId });
@@ -276,14 +276,14 @@ export const deleteTransaction = async (
   transactionId: string,
   userId: string,
 ): Promise<deleteTransactionReturnType> => {
-  const transaction: TransactionType | null = await Transaction.findById(transactionId);
+  const transaction: Transaction | null = await TransactionModel.findById(transactionId);
   if (!transaction) {
     throw ApiError.BadRequest('Transaction with such id does not exist');
   }
 
   const updatedBalances = await revertBalances(transaction, userId);
 
-  await Transaction.findByIdAndDelete(transactionId);
+  await TransactionModel.findByIdAndDelete(transactionId);
 
   return { transactionId, balances: updatedBalances };
 };
@@ -298,7 +298,7 @@ export const editTransaction = async (
     throw ApiError.BadRequest('_id field is required');
   }
 
-  const currentTransaction: MongooseTransaction | null = await Transaction.findById(transaction._id);
+  const currentTransaction: MongooseTransaction | null = await TransactionModel.findById(transaction._id);
   let updatedBalances = [] as MongooseBalance[];
 
   if (!currentTransaction) {

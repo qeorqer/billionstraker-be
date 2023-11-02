@@ -3,14 +3,14 @@ import Decimal from 'decimal.js';
 
 import Transaction from '@models/Transaction.model';
 
-type expenseIncomeType = {
+type ExpenseIncome = {
   _id: Types.ObjectId;
   total: number;
 };
 
-type getStatisticsForBalanceReturnType = {
-  expensesInRange: expenseIncomeType[];
-  profitsInRange: expenseIncomeType[];
+type GetStatisticsForBalanceResponse = {
+  expensesInRange: ExpenseIncome[];
+  profitsInRange: ExpenseIncome[];
   totallySpent: number;
   totallyEarned: number;
 };
@@ -20,10 +20,10 @@ export const getStatisticsForBalance = async (
   from: Date,
   to: Date,
   balance: string,
-): Promise<getStatisticsForBalanceReturnType | null> => {
+): Promise<GetStatisticsForBalanceResponse | null> => {
   // TODO: optimize db requests
 
-  let expensesInRange: expenseIncomeType[] = await Transaction.aggregate([
+  let expensesInRange: ExpenseIncome[] = await Transaction.aggregate([
     {
       $match: {
         ownerId: new Types.ObjectId(userId),
@@ -50,7 +50,7 @@ export const getStatisticsForBalance = async (
     total: Number(item.total.toFixed(2)),
   }));
 
-  let profitsInRange: expenseIncomeType[] = await Transaction.aggregate([
+  let profitsInRange: ExpenseIncome[] = await Transaction.aggregate([
     {
       $match: {
         ownerId: new Types.ObjectId(userId),

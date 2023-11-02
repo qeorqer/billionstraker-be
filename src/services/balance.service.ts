@@ -1,20 +1,20 @@
-import Balance from '@models/Balance.model';
+import BalanceModel from '@models/Balance.model';
 import ApiError from '@exceptions/api-errors';
-import { balanceType } from '@type/balance.type';
+import { Balance } from '@type/balance.type';
 import Transaction from '@models/Transaction.model';
 
 export const createBalance = async (
   name: string,
   amount: number | undefined,
   userId: string,
-): Promise<balanceType> => {
-  const balance = await Balance.findOne({ name, ownerId: userId });
+): Promise<Balance> => {
+  const balance = await BalanceModel.findOne({ name, ownerId: userId });
 
   if (balance) {
     throw ApiError.BadRequest('Balance with this name already exists');
   }
 
-  const newBalance = await Balance.create({
+  const newBalance = await BalanceModel.create({
     name,
     amount,
     ownerId: userId,
@@ -23,8 +23,8 @@ export const createBalance = async (
   return newBalance;
 };
 
-export const getBalances = async (userId: string): Promise<balanceType[]> => {
-  const userBalances = await Balance.find({ ownerId: userId });
+export const getBalances = async (userId: string): Promise<Balance[]> => {
+  const userBalances = await BalanceModel.find({ ownerId: userId });
 
   if (userBalances.length) {
     const balancesCounts: Array<{ name: string, count: number }> = await Promise.all(userBalances.map(async ({ name }) => {
@@ -53,10 +53,10 @@ export const getBalances = async (userId: string): Promise<balanceType[]> => {
 
 export const updateBalance = async (
   balanceId: string,
-  balance: balanceType,
+  balance: Balance,
   userId: string,
-): Promise<balanceType> => {
-  const balanceForUpdate = await Balance.findById(balanceId);
+): Promise<Balance> => {
+  const balanceForUpdate = await BalanceModel.findById(balanceId);
 
   if (!balanceForUpdate) {
     throw ApiError.BadRequest('There is no such balance');
@@ -79,7 +79,7 @@ export const updateBalance = async (
 };
 
 export const deleteBalance = async (balanceId: string): Promise<string> => {
-  const balanceToDelete = await Balance.findById(balanceId);
+  const balanceToDelete = await BalanceModel.findById(balanceId);
 
   if (!balanceToDelete) {
     throw ApiError.BadRequest('There is no such balance');

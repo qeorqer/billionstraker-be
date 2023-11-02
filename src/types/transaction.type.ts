@@ -1,12 +1,12 @@
 import { Types } from 'mongoose';
 
-enum transactionTypes {
+enum TransactionTypes {
   'expense' = 'expense',
   'profit' = 'profit',
   'exchange' = 'exchange',
 }
 
-export type TransactionType = {
+export type Transaction = {
   _id?: string;
   title: string;
   ownerId: Types.ObjectId;
@@ -16,7 +16,7 @@ export type TransactionType = {
   date: Date;
   balance: string;
   balanceToSubtract?: string;
-  transactionType: transactionTypes;
+  transactionType: TransactionTypes;
 };
 
 export type FilteringOptions = {

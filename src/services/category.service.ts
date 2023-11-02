@@ -1,12 +1,12 @@
-import Category from '@models/Category.model';
+import CategoryModel from '@models/Category.model';
 import ApiError from '@exceptions/api-errors';
-import { categoryType } from '@type/category.type';
+import { Category } from '@type/category.type';
 import Transaction from '@models/Transaction.model';
 
 export const getCategories = async (
   userId: string,
-): Promise<categoryType[]> => {
-  const categories = await Category.find({ ownerId: userId });
+): Promise<Category[]> => {
+  const categories = await CategoryModel.find({ ownerId: userId });
 
   if (!categories) {
     throw ApiError.ServerError('There is no categories');
@@ -35,10 +35,10 @@ export const getCategories = async (
 };
 
 export const createCategory = async (
-  category: categoryType,
+  category: Category,
   userId: string,
-): Promise<categoryType> => {
-  const isAlreadyExist = await Category.findOne({
+): Promise<Category> => {
+  const isAlreadyExist = await CategoryModel.findOne({
     name: category.name,
     ownerId: userId,
     categoryType: category.categoryType,
@@ -50,7 +50,7 @@ export const createCategory = async (
     );
   }
 
-  const newCategory = await Category.create({
+  const newCategory = await CategoryModel.create({
     ...category,
     ownerId: userId,
   });
@@ -60,10 +60,10 @@ export const createCategory = async (
 
 export const updateCategory = async (
   categoryId: string,
-  category: categoryType,
+  category: Category,
   userId: string,
-): Promise<categoryType> => {
-  const categoryForUpdate = await Category.findById(categoryId);
+): Promise<Category> => {
+  const categoryForUpdate = await CategoryModel.findById(categoryId);
 
   if (!categoryForUpdate) {
     throw ApiError.BadRequest('There is no such category');
@@ -86,7 +86,7 @@ export const updateCategory = async (
 };
 
 export const deleteCategory = async (categoryId: string): Promise<string> => {
-  const categoryToDelete = await Category.findById(categoryId);
+  const categoryToDelete = await CategoryModel.findById(categoryId);
 
   if (!categoryToDelete) {
     throw ApiError.BadRequest('There is no such category');
