@@ -8,7 +8,7 @@ import mongoose from 'mongoose';
 import userRouter from '@routes/user.route';
 import categoryRouter from '@routes/category.route';
 import transactionRouter from '@routes/transaction.route';
-import statisticRouter from '@routes/statistic.route';
+import statisticRouter from '@routes/statistics.route';
 import balanceRouter from '@routes/balance.route';
 import errorMiddleware from '@middlewares/errors.middleware';
 

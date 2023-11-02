@@ -6,25 +6,25 @@ import * as balanceController from '@controllers/balance.controller';
 const balanceRouter: Router = Router();
 
 balanceRouter.post(
-  '/createBalance',
+  '/create',
   authMiddleware,
   balanceController.createBalance,
 );
 
 balanceRouter.get(
-  '/getBalances',
+  '/get',
   authMiddleware,
   balanceController.getBalances,
 );
 
 balanceRouter.patch(
-  '/updateBalance',
+  '/update',
   authMiddleware,
   balanceController.updateBalance,
 );
 
 balanceRouter.delete(
-  '/deleteBalance',
+  '/delete',
   authMiddleware,
   balanceController.deleteBalance,
 );
