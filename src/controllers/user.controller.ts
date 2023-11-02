@@ -3,6 +3,7 @@ import { validationResult } from 'express-validator';
 
 import * as userService from '@services/user.service';
 import ApiError from '@exceptions/api-errors';
+import { User } from '@type/user.type';
 
 type ControllerFunction = (
   req: Request,
@@ -91,14 +92,15 @@ export const logOut: ControllerFunction = async (req, res, next) => {
   }
 };
 
-export const setFirstEnter: ControllerFunction = async (req, res, next) => {
+export const updateUser: ControllerFunction = async (req, res, next) => {
   try {
+    const { updatedFields }: { updatedFields: Partial<User> } = req.body;
     const { userId } = req.body.user;
 
-    const user = await userService.setFirstEnter(userId);
+    const user = await userService.updateUser(updatedFields, userId);
 
     return res.status(201).json({
-      message: 'isFirstEnter set to false',
+      message: 'User updated successfully',
       user,
     });
   } catch (e) {

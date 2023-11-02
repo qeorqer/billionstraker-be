@@ -7,6 +7,7 @@ import ApiError from '@exceptions/api-errors';
 import { User } from '@type/user.type';
 import { userDto } from '@dto/user.dto';
 import { updateTokens, verifyRefresh } from '@services/token.service';
+import { omit } from 'lodash';
 
 type AuthResponse = {
   user: Partial<User>;
@@ -119,12 +120,15 @@ export const logOut = async (refreshToken: string): Promise<void> => {
   await TokenModel.findOneAndRemove({ tokenId: verifiedToken.id });
 };
 
-export const setFirstEnter = async (
+export const updateUser = async (
+  updatedFields: Partial<User>,
   userId: Types.ObjectId,
 ): Promise<Partial<User>> => {
+  const checkedUpdatedFields = omit(updatedFields, ['password', 'login']);
+
   const user = await UserModel.findByIdAndUpdate(
     userId,
-    { isFirstEnter: false },
+    checkedUpdatedFields,
     { new: true },
   );
 

@@ -4,19 +4,17 @@ import { Balance } from '@type/balance.type';
 import Transaction from '@models/Transaction.model';
 
 export const createBalance = async (
-  name: string,
-  amount: number | undefined,
+  balance: Partial<Balance>,
   userId: string,
 ): Promise<Balance> => {
-  const balance = await BalanceModel.findOne({ name, ownerId: userId });
+  const isAlreadyExist = await BalanceModel.findOne({ name: balance.name!, ownerId: userId });
 
-  if (balance) {
+  if (isAlreadyExist) {
     throw ApiError.BadRequest('Balance with this name already exists');
   }
 
   const newBalance = await BalanceModel.create({
-    name,
-    amount,
+    ...balance,
     ownerId: userId,
   });
 

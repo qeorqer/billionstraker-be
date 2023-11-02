@@ -31,7 +31,7 @@ userRouter.post('/logout', userController.logOut);
 userRouter.patch(
   '/update',
   authMiddleware,
-  userController.setFirstEnter,
+  userController.updateUser,
 );
 
 export default userRouter;
