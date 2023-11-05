@@ -3,11 +3,17 @@ import ApiError from '@exceptions/api-errors';
 import { Balance } from '@type/balance.type';
 import Transaction from '@models/Transaction.model';
 
-export const createBalance = async (
-  balance: Partial<Balance>,
-  userId: string,
-): Promise<Balance> => {
-  const isAlreadyExist = await BalanceModel.findOne({ name: balance.name!, ownerId: userId });
+export const createBalance = async ({
+  balance,
+  userId,
+}: {
+  balance: Partial<Balance>;
+  userId: string;
+}): Promise<Balance> => {
+  const isAlreadyExist = await BalanceModel.findOne({
+    name: balance.name!,
+    ownerId: userId,
+  });
 
   if (isAlreadyExist) {
     throw ApiError.BadRequest('Balance with this name already exists');
@@ -25,17 +31,24 @@ export const getBalances = async (userId: string): Promise<Balance[]> => {
   const userBalances = await BalanceModel.find({ ownerId: userId });
 
   if (userBalances.length) {
-    const balancesCounts: Array<{ name: string, count: number }> = await Promise.all(userBalances.map(async ({ name }) => {
-      const count = await Transaction.find({
-        $or: [{balance: name}, {balanceToSubtract: name,}],
-      }).countDocuments();
+    const balancesCounts: Array<{ name: string; count: number }> =
+      await Promise.all(
+        userBalances.map(async ({ name }) => {
+          const count = await Transaction.find({
+            $or: [{ balance: name }, { balanceToSubtract: name }],
+          }).countDocuments();
 
-      return { name, count };
-    }));
+          return { name, count };
+        }),
+      );
 
     userBalances.sort((a, b) => {
-      const aCount = balancesCounts.find((balanceCount) => balanceCount.name === a.name)?.count;
-      const bCount = balancesCounts.find((balanceCount) => balanceCount.name === b.name)?.count;
+      const aCount = balancesCounts.find(
+        (balanceCount) => balanceCount.name === a.name,
+      )?.count;
+      const bCount = balancesCounts.find(
+        (balanceCount) => balanceCount.name === b.name,
+      )?.count;
 
       if (aCount === undefined || bCount === undefined) {
         return 0;
@@ -43,18 +56,19 @@ export const getBalances = async (userId: string): Promise<Balance[]> => {
 
       return bCount - aCount;
     });
-
   }
 
   return userBalances;
 };
 
-export const updateBalance = async (
-  balanceId: string,
-  balance: Balance,
-  userId: string,
-): Promise<Balance> => {
-  const balanceForUpdate = await BalanceModel.findById(balanceId);
+export const updateBalance = async ({
+  balance,
+  userId,
+}: {
+  balance: Balance;
+  userId: string;
+}): Promise<Balance> => {
+  const balanceForUpdate = await BalanceModel.findById(balance._id);
 
   if (!balanceForUpdate) {
     throw ApiError.BadRequest('There is no such balance');

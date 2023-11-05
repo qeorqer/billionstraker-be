@@ -21,7 +21,10 @@ export const createBalance: ControllerFunction = async (req, res, next) => {
       return next(ApiError.BadRequest('Name is required'));
     }
 
-    const createdBalance = await balanceService.createBalance(balance, userId);
+    const createdBalance = await balanceService.createBalance({
+      balance,
+      userId,
+    });
 
     return res.json({
       message: 'Balance created successfully',
@@ -49,18 +52,17 @@ export const getBalances: ControllerFunction = async (req, res, next) => {
 
 export const updateBalance: ControllerFunction = async (req, res, next) => {
   try {
-    const { balanceId, balance } = req.body;
+    const { balance } = req.body;
     const { userId } = req.body.user;
 
-    if (!balanceId || !balance) {
-      return next(ApiError.BadRequest('BalanceId and balance are required'));
+    if (!balance) {
+      return next(ApiError.BadRequest('Balance is required'));
     }
 
-    const updatedBalance = await balanceService.updateBalance(
-      balanceId,
+    const updatedBalance = await balanceService.updateBalance({
       balance,
       userId,
-    );
+    });
 
     return res.json({
       message: 'Balance updated successfully',
