@@ -31,6 +31,8 @@ export const getBalances = async (userId: string): Promise<Balance[]> => {
   const userBalances = await BalanceModel.find({ ownerId: userId });
 
   if (userBalances.length) {
+    // Sort balances to show the most used first
+
     const balancesCounts: Array<{ name: string; count: number }> =
       await Promise.all(
         userBalances.map(async ({ name }) => {
