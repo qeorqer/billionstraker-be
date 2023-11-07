@@ -8,7 +8,13 @@ const statisticRouter: Router = Router();
 statisticRouter.post(
   '/getForSingleBalance',
   authMiddleware,
-  statisticController.getStatisticsForBalance,
+  statisticController.getStatisticsForSingleBalance,
+);
+
+statisticRouter.get(
+  '/getNetWorth',
+  authMiddleware,
+  statisticController.getNetWorth,
 );
 
 export default statisticRouter;

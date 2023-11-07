@@ -6,7 +6,7 @@ export type User = {
   preferredCurrency: string | null;
 };
 
-export type UserForResponce = {
+export type UserForResponse = {
   login: string;
   isFirstEnter: boolean;
   created: Date;

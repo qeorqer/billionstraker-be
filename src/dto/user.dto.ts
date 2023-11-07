@@ -1,7 +1,7 @@
 import { omit } from 'lodash';
 
-import { User, UserForResponce } from '@type/user.type';
+import { User, UserForResponse } from '@type/user.type';
 
-export const userDto = (user: User): UserForResponce => {
+export const userDto = (user: User): UserForResponse => {
   return omit(user, ['password']);
 };

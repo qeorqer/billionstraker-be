@@ -8,7 +8,7 @@ type ControllerFunction = (
   next: NextFunction,
 ) => Promise<Response | void>;
 
-export const getStatisticsForBalance: ControllerFunction = async (
+export const getStatisticsForSingleBalance: ControllerFunction = async (
   req,
   res,
   next,
@@ -17,7 +17,7 @@ export const getStatisticsForBalance: ControllerFunction = async (
     const { userId } = req.body.user;
     const { from, to, balance } = req.body;
 
-    const statistic = await statisticService.getStatisticsForBalance(
+    const statistics = await statisticService.getStatisticsForBalance(
       userId,
       from,
       to,
@@ -25,8 +25,23 @@ export const getStatisticsForBalance: ControllerFunction = async (
     );
 
     return res.json({
-      message: 'Statistic calculated successfully',
-      statistic,
+      message: 'Statistics for single balance calculated successfully',
+      statistics,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const getNetWorth: ControllerFunction = async (req, res, next) => {
+  try {
+    const { userId } = req.body.user;
+
+    const statistics = await statisticService.getNetWorth(userId);
+
+    return res.json({
+      message: 'Net worth calculated successfully',
+      statistics,
     });
   } catch (e) {
     next(e);

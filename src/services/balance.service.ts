@@ -2,13 +2,14 @@ import BalanceModel from '@models/Balance.model';
 import ApiError from '@exceptions/api-errors';
 import { Balance } from '@type/balance.type';
 import Transaction from '@models/Transaction.model';
+import { Types } from 'mongoose';
 
 export const createBalance = async ({
   balance,
   userId,
 }: {
   balance: Partial<Balance>;
-  userId: string;
+  userId: Types.ObjectId;
 }): Promise<Balance> => {
   const isAlreadyExist = await BalanceModel.findOne({
     name: balance.name!,
@@ -27,7 +28,9 @@ export const createBalance = async ({
   return newBalance;
 };
 
-export const getBalances = async (userId: string): Promise<Balance[]> => {
+export const getBalances = async (
+  userId: Types.ObjectId,
+): Promise<Balance[]> => {
   const userBalances = await BalanceModel.find({ ownerId: userId });
 
   if (userBalances.length) {
@@ -68,7 +71,7 @@ export const updateBalance = async ({
   userId,
 }: {
   balance: Balance;
-  userId: string;
+  userId: Types.ObjectId;
 }): Promise<Balance> => {
   const balanceForUpdate = await BalanceModel.findById(balance._id);
 
@@ -92,7 +95,9 @@ export const updateBalance = async ({
   return updatedBalance;
 };
 
-export const deleteBalance = async (balanceId: string): Promise<string> => {
+export const deleteBalance = async (
+  balanceId: Types.ObjectId,
+): Promise<Types.ObjectId> => {
   const balanceToDelete = await BalanceModel.findById(balanceId);
 
   if (!balanceToDelete) {
