@@ -8,7 +8,7 @@ export type Transaction = {
   ownerId: Types.ObjectId;
   sum: number;
   sumToSubtract?: number;
-  category: String;
+  category: string;
   date: Date;
   balance: string;
   balanceToSubtract?: string;
