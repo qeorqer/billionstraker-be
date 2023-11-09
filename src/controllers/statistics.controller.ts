@@ -17,7 +17,7 @@ export const getStatisticsForSingleBalance: ControllerFunction = async (
     const { userId } = req.body.user;
     const { from, to, balance } = req.body;
 
-    const statistics = await statisticService.getStatisticsForBalance(
+    const statistics = await statisticService.getStatisticsForSingleBalance(
       userId,
       from,
       to,

@@ -3,6 +3,7 @@ import Decimal from 'decimal.js';
 
 import UserModel from '@models/User.model';
 import TransactionModel from '@models/Transaction.model';
+import { TransactionType } from '@type/transaction.type';
 import { getBalances } from '@services/balance.service';
 import axios from 'axios';
 
@@ -20,15 +21,22 @@ type GetStatisticsForBalanceResponse = {
   totallyEarned: number;
 };
 
-export const getStatisticsForBalance = async (
-  userId: Types.ObjectId,
-  from: Date,
-  to: Date,
-  balance: string,
-): Promise<GetStatisticsForBalanceResponse | null> => {
-  // TODO: optimize db requests
+type GetTransactionsAggregateBody = {
+  userId: Types.ObjectId;
+  from: Date;
+  to: Date;
+  balanceName: string;
+  transactionType: TransactionType;
+};
 
-  let expensesInRange: ExpenseIncome[] = await TransactionModel.aggregate([
+const getTransactionsAggregate = async ({
+  userId,
+  from,
+  to,
+  balanceName,
+  transactionType,
+}: GetTransactionsAggregateBody): Promise<ExpenseIncome[]> => {
+  return TransactionModel.aggregate([
     {
       $match: {
         ownerId: new Types.ObjectId(userId),
@@ -36,8 +44,8 @@ export const getStatisticsForBalance = async (
           $gte: new Date(from),
           $lt: new Date(to),
         },
-        balance,
-        transactionType: 'expense',
+        balance: balanceName,
+        transactionType,
       },
     },
     {
@@ -48,34 +56,36 @@ export const getStatisticsForBalance = async (
         },
       },
     },
+  ]);
+};
+
+export const getStatisticsForSingleBalance = async (
+  userId: Types.ObjectId,
+  from: Date,
+  to: Date,
+  balanceName: string,
+): Promise<GetStatisticsForBalanceResponse | null> => {
+  let [expensesInRange, profitsInRange] = await Promise.all([
+    getTransactionsAggregate({
+      userId,
+      from,
+      to,
+      balanceName,
+      transactionType: 'expense',
+    }),
+    getTransactionsAggregate({
+      userId,
+      from,
+      to,
+      balanceName,
+      transactionType: 'profit',
+    }),
   ]);
 
   expensesInRange = expensesInRange.map((item) => ({
     ...item,
     total: Number(item.total.toFixed(2)),
   }));
-
-  let profitsInRange: ExpenseIncome[] = await TransactionModel.aggregate([
-    {
-      $match: {
-        ownerId: new Types.ObjectId(userId),
-        date: {
-          $gte: new Date(from),
-          $lt: new Date(to),
-        },
-        balance,
-        transactionType: 'profit',
-      },
-    },
-    {
-      $group: {
-        _id: '$category',
-        total: {
-          $sum: '$sum',
-        },
-      },
-    },
-  ]);
 
   profitsInRange = profitsInRange.map((item) => ({
     ...item,
