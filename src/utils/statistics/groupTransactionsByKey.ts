@@ -12,7 +12,8 @@ export const groupTransactionsByKey = (
   transactions.forEach((balance) => {
     const groupKey = key
       .split('-')
-      .reduce((acc, cur) => (acc += balance[cur as keyof typeof balance]), '');
+      .map((balanceKey) => balance[balanceKey as keyof typeof balance])
+      .join('-');
 
     if (groupedTransactions[groupKey]) {
       groupedTransactions[groupKey] = Decimal.add(

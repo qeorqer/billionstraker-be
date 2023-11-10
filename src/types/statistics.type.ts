@@ -4,7 +4,7 @@ import { Transaction, TransactionType } from '@type/transaction.type';
 import { User } from '@type/user.type';
 import { Balance } from '@type/balance.type';
 
-export type GetNetWorthResponse = {
+export type GetNetWorthResult = {
   value: number;
   currency: string;
 };
@@ -14,20 +14,20 @@ export type CategoryStatistics = {
   amount: number;
 };
 
-export type StatisticsForTransactionTypeResponse = {
+export type StatisticsForTransactionTypeResult = {
   range: CategoryStatistics[];
   total: number;
 };
 
-export type GetExchangesStatisticsResponse = {
+export type GetExchangesStatisticsResult = {
   totallySend: number;
   totallyReceived: number;
 };
 
-export type GetStatisticsResponse = {
-  expenses: StatisticsForTransactionTypeResponse;
-  profits: StatisticsForTransactionTypeResponse;
-  exchanges: GetExchangesStatisticsResponse | null;
+export type GetStatisticsResult = {
+  expenses: StatisticsForTransactionTypeResult;
+  profits: StatisticsForTransactionTypeResult;
+  exchanges: GetExchangesStatisticsResult | null;
 };
 
 export type GetTransactionsByTypeOptions = {

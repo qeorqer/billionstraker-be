@@ -6,8 +6,8 @@ import TransactionModel from '@models/Transaction.model';
 import { getBalances } from '@services/balance.service';
 import { convertCurrency } from '@utils/statistics/convertCurrency';
 import {
-  GetNetWorthResponse,
-  GetStatisticsResponse,
+  GetNetWorthResult,
+  GetStatisticsResult,
   GetTransactionsByTypeOptions,
 } from '@type/statistics.type';
 import { getStatisticsRange } from '@utils/statistics/GetStatisticsRange';
@@ -16,7 +16,7 @@ import { getExchangesStatistics } from '@utils/statistics/getExchangeStatistics'
 
 export const getNetWorth = async (
   userId: Types.ObjectId,
-): Promise<GetNetWorthResponse | null> => {
+): Promise<GetNetWorthResult | null> => {
   const user = await UserModel.findById(userId);
   const userBalances = await getBalances(userId);
 
@@ -67,7 +67,7 @@ export const getStatistics = async (
   from: Date,
   to: Date,
   balanceName: string | null,
-): Promise<GetStatisticsResponse> => {
+): Promise<GetStatisticsResult> => {
   const user = await UserModel.findById(userId);
   const balances = await getBalances(userId);
 

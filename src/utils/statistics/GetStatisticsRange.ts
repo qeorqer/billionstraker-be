@@ -1,7 +1,7 @@
 import {
   GetStatisticsRangeOptions,
   CategoryStatistics,
-  StatisticsForTransactionTypeResponse,
+  StatisticsForTransactionTypeResult,
 } from '@type/statistics.type';
 import { groupTransactionsByKey } from '@utils/statistics/groupTransactionsByKey';
 import { getCategoryStatisticsTotalValue } from '@utils/statistics/getCategoryStatisticsTotalValue';
@@ -12,7 +12,7 @@ export const getStatisticsRange = async ({
   user,
   balances,
   balanceName,
-}: GetStatisticsRangeOptions): Promise<StatisticsForTransactionTypeResponse> => {
+}: GetStatisticsRangeOptions): Promise<StatisticsForTransactionTypeResult> => {
   if (!transactions.length) {
     return {
       range: [],
