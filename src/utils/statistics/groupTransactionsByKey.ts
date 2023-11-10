@@ -3,7 +3,7 @@ import Decimal from 'decimal.js';
 
 export const groupTransactionsByKey = (
   transactions: Transaction[],
-  key: 'category' | 'balance-category',
+  key: 'category' | 'balance-category' | 'balance',
 ) => {
   const groupedTransactions: {
     [key: string]: number;

@@ -1,6 +1,6 @@
 import {
   GetStatisticsRangeOptions,
-  CategoryStatistics,
+  RangeStatisticsItem,
   StatisticsForTransactionTypeResult,
 } from '@type/statistics.type';
 import { groupTransactionsByKey } from '@utils/statistics/groupTransactionsByKey';
@@ -15,7 +15,7 @@ export const getStatisticsRange = async ({
 }: GetStatisticsRangeOptions): Promise<StatisticsForTransactionTypeResult> => {
   if (!transactions.length) {
     return {
-      range: [],
+      categoryRange: [],
       total: 0,
     };
   }
@@ -25,30 +25,46 @@ export const getStatisticsRange = async ({
     const total = getCategoryStatisticsTotalValue(range);
 
     return {
-      range,
+      categoryRange: range,
       total,
     };
   }
 
-  const groupedTransactions = groupTransactionsByKey(
+  const groupedTransactionsByCategory = groupTransactionsByKey(
     transactions,
     'balance-category',
   );
 
-  const groupedTransactionsWithConvertedCurrency =
+  const groupedTransactionsByBalance = groupTransactionsByKey(
+    transactions,
+    'balance',
+  );
+
+  const groupedTransactionsByCategoryWithConvertedCurrency =
     await convertCurrencyForGroupedTransaction(
-      groupedTransactions,
+      groupedTransactionsByCategory,
+      balances,
+      user.preferredCurrency,
+    );
+
+  const groupedTransactionsByBalanceWithConvertedCurrency =
+    await convertCurrencyForGroupedTransaction(
+      groupedTransactionsByBalance,
       balances,
       user.preferredCurrency,
     );
 
   // @ts-ignore
-  const filteredValues: CategoryStatistics[] =
-    groupedTransactionsWithConvertedCurrency.filter(Boolean);
-  const total = getCategoryStatisticsTotalValue(filteredValues);
+  const filteredCategoryRange: RangeStatisticsItem[] =
+    groupedTransactionsByCategoryWithConvertedCurrency.filter(Boolean);
+  // @ts-ignore
+  const filteredBalanceRange: RangeStatisticsItem[] =
+    groupedTransactionsByBalanceWithConvertedCurrency.filter(Boolean);
+  const total = getCategoryStatisticsTotalValue(filteredCategoryRange);
 
   return {
-    range: filteredValues,
+    categoryRange: filteredCategoryRange,
+    balanceRange: filteredBalanceRange,
     total,
   };
 };

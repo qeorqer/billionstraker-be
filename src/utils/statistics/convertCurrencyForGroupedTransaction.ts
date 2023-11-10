@@ -1,13 +1,13 @@
-import { CategoryStatistics } from '@type/statistics.type';
+import { RangeStatisticsItem } from '@type/statistics.type';
 import { convertCurrency } from '@utils/statistics/convertCurrency';
 import { Balance } from '@type/balance.type';
 
 export const convertCurrencyForGroupedTransaction = async (
-  groupedTransactions: CategoryStatistics[],
+  groupedTransactions: RangeStatisticsItem[],
   balances: Balance[],
   preferredCurrency: string | null,
 ) =>
-  Promise.all<CategoryStatistics | null>(
+  Promise.all<RangeStatisticsItem | null>(
     groupedTransactions.map(async ({ name, amount }) => {
       const [balanceName, category] = name.split('-');
       const balance = balances.find(({ name }) => name === balanceName);
@@ -23,7 +23,7 @@ export const convertCurrencyForGroupedTransaction = async (
       );
 
       return {
-        name: category,
+        name: category || balanceName,
         amount: convertedTotalValue,
       };
     }),

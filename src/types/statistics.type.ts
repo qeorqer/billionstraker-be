@@ -9,13 +9,14 @@ export type GetNetWorthResult = {
   currency: string;
 };
 
-export type CategoryStatistics = {
+export type RangeStatisticsItem = {
   name: string;
   amount: number;
 };
 
 export type StatisticsForTransactionTypeResult = {
-  range: CategoryStatistics[];
+  categoryRange: RangeStatisticsItem[];
+  balanceRange?: RangeStatisticsItem[];
   total: number;
 };
 
