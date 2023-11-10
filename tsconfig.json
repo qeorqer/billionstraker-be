@@ -17,7 +17,8 @@
        "@type/*": ["types/*"],
        "@middlewares/*": ["middlewares/*"],
        "@exceptions/*": ["exceptions/*"],
-       "@dto/*": ["dto/*"]
+       "@dto/*": ["dto/*"],
+       "@utils/*": ["utils/*"]
      },                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
     "skipLibCheck": true /* Skip type checking of declaration files. */,

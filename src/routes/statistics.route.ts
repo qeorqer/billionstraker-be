@@ -5,11 +5,7 @@ import * as statisticController from '@controllers/statistics.controller';
 
 const statisticRouter: Router = Router();
 
-statisticRouter.post(
-  '/getForSingleBalance',
-  authMiddleware,
-  statisticController.getStatisticsForSingleBalance,
-);
+statisticRouter.post('/get', authMiddleware, statisticController.getStatistics);
 
 statisticRouter.get(
   '/getNetWorth',

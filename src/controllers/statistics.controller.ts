@@ -8,16 +8,12 @@ type ControllerFunction = (
   next: NextFunction,
 ) => Promise<Response | void>;
 
-export const getStatisticsForSingleBalance: ControllerFunction = async (
-  req,
-  res,
-  next,
-) => {
+export const getStatistics: ControllerFunction = async (req, res, next) => {
   try {
     const { userId } = req.body.user;
     const { from, to, balance } = req.body;
 
-    const statistics = await statisticService.getStatisticsForSingleBalance(
+    const statistics = await statisticService.getStatistics(
       userId,
       from,
       to,
