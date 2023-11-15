@@ -6,6 +6,7 @@ enum CategoryTypes {
 }
 
 export type Category = {
+  _id: Types.ObjectId;
   name: string;
   categoryType: CategoryTypes;
   ownerId: Types.ObjectId;
