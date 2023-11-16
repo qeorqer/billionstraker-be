@@ -6,6 +6,7 @@ import {
 import { groupTransactionsByKey } from '@utils/statistics/groupTransactionsByKey';
 import { getCategoryStatisticsTotalValue } from '@utils/statistics/getCategoryStatisticsTotalValue';
 import { convertCurrencyForGroupedTransaction } from '@utils/statistics/convertCurrencyForGroupedTransaction';
+import Decimal from 'decimal.js';
 
 export const getStatisticsRange = async ({
   transactions,
@@ -55,15 +56,40 @@ export const getStatisticsRange = async ({
     );
 
   // @ts-ignore
-  const filteredCategoryRange: RangeStatisticsItem[] =
-    groupedTransactionsByCategoryWithConvertedCurrency.filter(Boolean);
-  // @ts-ignore
   const filteredBalanceRange: RangeStatisticsItem[] =
     groupedTransactionsByBalanceWithConvertedCurrency.filter(Boolean);
-  const total = getCategoryStatisticsTotalValue(filteredCategoryRange);
+
+  // @ts-ignore
+  const filteredCategoryRange: RangeStatisticsItem[] =
+    groupedTransactionsByCategoryWithConvertedCurrency.filter(Boolean);
+
+  const reducedGroupedTransaction = filteredCategoryRange.reduce(
+    (result: RangeStatisticsItem[], statisticsItem) => {
+      const categoryExists = result.find(
+        (item) => item.name === statisticsItem?.name,
+      );
+
+      if (categoryExists) {
+        categoryExists.amount = Decimal.add(
+          categoryExists.amount,
+          statisticsItem.amount,
+        ).toNumber();
+      } else {
+        result.push({
+          name: statisticsItem.name,
+          amount: statisticsItem.amount,
+        });
+      }
+
+      return result;
+    },
+    [],
+  );
+
+  const total = getCategoryStatisticsTotalValue(reducedGroupedTransaction);
 
   return {
-    categoryRange: filteredCategoryRange,
+    categoryRange: reducedGroupedTransaction,
     balanceRange: filteredBalanceRange,
     total,
   };

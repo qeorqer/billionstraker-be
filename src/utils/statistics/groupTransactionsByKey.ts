@@ -25,8 +25,10 @@ export const groupTransactionsByKey = (
     }
   });
 
-  return Object.keys(groupedTransactions).map((key) => ({
-    name: key,
-    amount: groupedTransactions[key],
-  }));
+  return Object.keys(groupedTransactions)
+    .map((key) => ({
+      name: key,
+      amount: groupedTransactions[key],
+    }))
+    .sort((a, b) => b.amount - a.amount);
 };
