@@ -161,6 +161,10 @@ type conditionForSearchType = {
   ownerId: Types.ObjectId;
   transactionType?: string;
   balance?: { $in: string[] };
+  $or?: [
+    { balance: { $in: string[] } },
+    { balanceToSubtract: { $in: string[] } },
+  ];
   category?: { $in: string[] };
   date?: {
     $gte: Date;
@@ -181,7 +185,14 @@ const formConditionForSearch = (
   }
 
   if (filteringOptions.balancesToShow.length) {
-    result.balance = { $in: filteringOptions.balancesToShow };
+    if (filteringOptions.shownTransactionsTypes === 'exchange') {
+      result.$or = [
+        { balance: { $in: filteringOptions.balancesToShow } },
+        { balanceToSubtract: { $in: filteringOptions.balancesToShow } },
+      ];
+    } else {
+      result.balance = { $in: filteringOptions.balancesToShow };
+    }
   }
 
   if (filteringOptions.categoriesToShow.length) {
