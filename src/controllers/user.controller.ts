@@ -88,3 +88,18 @@ export const updateUser: ControllerFunction = async (req, res, next) => {
     next(e);
   }
 };
+
+export const getUser: ControllerFunction = async (req, res, next) => {
+  try {
+    const { userId } = req.body.user;
+
+    const user = await userService.getUser(userId);
+
+    return res.status(200).json({
+      message: 'User found successfully',
+      user,
+    });
+  } catch (e) {
+    next(e);
+  }
+};

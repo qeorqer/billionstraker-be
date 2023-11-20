@@ -24,14 +24,12 @@ userRouter.post(
   userController.logIn,
 );
 
-userRouter.get('/refresh', userController.refresh);
+userRouter.post('/refresh', userController.refresh);
+
+userRouter.get('/get', authMiddleware, userController.getUser);
 
 userRouter.post('/logout', userController.logOut);
 
-userRouter.patch(
-  '/update',
-  authMiddleware,
-  userController.updateUser,
-);
+userRouter.patch('/update', authMiddleware, userController.updateUser);
 
 export default userRouter;

@@ -38,7 +38,7 @@ export const signUp = async (
   await user.save();
   return {
     user,
-    ...tokens
+    ...tokens,
   };
 };
 
@@ -126,11 +126,23 @@ export const updateUser = async (
 ): Promise<Partial<User>> => {
   const checkedUpdatedFields = omit(updatedFields, ['password', 'login']);
 
-  const user = await UserModel.findByIdAndUpdate(
-    userId,
-    checkedUpdatedFields,
-    { new: true },
-  );
+  const user = await UserModel.findByIdAndUpdate(userId, checkedUpdatedFields, {
+    new: true,
+  });
+
+  if (!user) {
+    throw ApiError.BadRequest('There is no such user');
+  }
+
+  const userWithoutExtraFields = userDto(user);
+
+  return userWithoutExtraFields;
+};
+
+export const getUser = async (
+  userId: Types.ObjectId,
+): Promise<Partial<User>> => {
+  const user = await UserModel.findById(userId);
 
   if (!user) {
     throw ApiError.BadRequest('There is no such user');
