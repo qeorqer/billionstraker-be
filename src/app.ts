@@ -2,7 +2,6 @@ import 'dotenv/config';
 import 'module-alias/register';
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
-import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 
 import userRouter from '@routes/user.route';
@@ -28,7 +27,6 @@ app.use(
 );
 
 app.set('trust proxy', true);
-app.use(cookieParser());
 app.use(express.json());
 app.use('/api/user', userRouter);
 app.use('/api/category', categoryRouter);

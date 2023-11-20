@@ -25,13 +25,6 @@ export const signUp: ControllerFunction = async (req, res, next) => {
 
     const authRes = await userService.signUp(login, password);
 
-    res.cookie('refreshToken', authRes.refreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-    });
-
     return res.status(201).json(authRes);
   } catch (e) {
     next(e);
@@ -52,12 +45,6 @@ export const logIn: ControllerFunction = async (req, res, next) => {
 
     const logInRes = await userService.logIn(login, password);
 
-    res.cookie('refreshToken', logInRes.refreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-    });
     return res.json(logInRes);
   } catch (e) {
     next(e);
@@ -66,16 +53,10 @@ export const logIn: ControllerFunction = async (req, res, next) => {
 
 export const refresh: ControllerFunction = async (req, res, next) => {
   try {
-    const { refreshToken } = req.cookies;
+    const { refreshToken } = req.body;
 
     const result = await userService.refresh(refreshToken);
 
-    res.cookie('refreshToken', result.refreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-    });
     return res.json(result);
   } catch (e) {
     next(e);
