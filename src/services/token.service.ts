@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import TokenModel from '@models/Token.model';
 import ApiError from '@exceptions/api-errors';
 
-const ACCESS_TOKEN_TTL = 2;
+const ACCESS_TOKEN_TTL = 15;
 
 export const verifyAccess = (accessToken: string): JwtPayload | string => {
   try {
