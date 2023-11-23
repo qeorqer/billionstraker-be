@@ -36,8 +36,10 @@ export const signUp = async (
   const tokens = await updateTokens(user._id);
 
   await user.save();
+  const userForReturn: Partial<User> = userDto(user.toObject());
+
   return {
-    user,
+    user: userForReturn,
     ...tokens,
   };
 };

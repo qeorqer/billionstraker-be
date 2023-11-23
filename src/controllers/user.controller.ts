@@ -67,7 +67,7 @@ export const logOut: ControllerFunction = async (req, res, next) => {
   try {
     const { refreshToken } = req.body;
     await userService.logOut(refreshToken);
-    return res.status(200).json('log out successfully');
+    return res.status(200).json({ message: 'log out successfully' });
   } catch (e) {
     next(e);
   }
