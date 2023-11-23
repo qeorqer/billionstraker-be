@@ -110,16 +110,14 @@ export const refresh = async (
 };
 
 export const logOut = async (refreshToken: string): Promise<void> => {
-  if (!refreshToken) {
-    throw ApiError.UnauthorizedError();
+  if (refreshToken) {
+    const verifiedToken = verifyRefresh(refreshToken);
+    if (
+      !(typeof verifiedToken === 'string' || verifiedToken.type !== 'refresh')
+    ) {
+      await TokenModel.findOneAndRemove({ tokenId: verifiedToken.id });
+    }
   }
-
-  const verifiedToken = verifyRefresh(refreshToken);
-  if (typeof verifiedToken === 'string' || verifiedToken.type !== 'refresh') {
-    throw ApiError.UnauthorizedError();
-  }
-
-  await TokenModel.findOneAndRemove({ tokenId: verifiedToken.id });
 };
 
 export const updateUser = async (
