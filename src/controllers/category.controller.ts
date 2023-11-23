@@ -48,15 +48,14 @@ export const createCategory: ControllerFunction = async (req, res, next) => {
 
 export const updateCategory: ControllerFunction = async (req, res, next) => {
   try {
-    const { categoryId, category } = req.body;
+    const { category } = req.body;
     const { userId } = req.body.user;
 
-    if (!categoryId || !category) {
-      return next(ApiError.BadRequest('CategoryId and category are required'));
+    if (!category) {
+      return next(ApiError.BadRequest('Category is required'));
     }
 
     const updatedCategory = await categoryService.updateCategory(
-      categoryId,
       category,
       userId,
     );

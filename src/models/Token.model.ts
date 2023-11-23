@@ -1,6 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 
-import { tokenType } from '@type/token.type';
+import { Token } from '@type/token.type';
 
 const Token = new Schema({
   tokenId: { type: String, required: true },
@@ -12,5 +12,5 @@ const Token = new Schema({
   },
 });
 
-type mongooseUser = Document & tokenType;
+type mongooseUser = Document & Token;
 export default model<mongooseUser>('Token', Token);

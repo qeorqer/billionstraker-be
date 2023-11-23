@@ -1,6 +1,6 @@
 import { Document, model, Schema, Types } from 'mongoose';
 
-import { categoryType } from '@type/category.type';
+import { Category } from '@type/category.type';
 
 const categoriesType = ['expense', 'profit'];
 
@@ -10,5 +10,5 @@ const schema: Schema = new Schema({
   ownerId: { type: Types.ObjectId, ref: 'User', required: true },
 });
 
-type MongooseCategory = Document & categoryType;
+type MongooseCategory = Document & Category;
 export default model<MongooseCategory>('Category', schema);

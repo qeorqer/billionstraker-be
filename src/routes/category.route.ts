@@ -6,25 +6,25 @@ import * as categoryController from '@controllers/category.controller';
 const categoryRouter: Router = Router();
 
 categoryRouter.get(
-  '/getCategories',
+  '/get',
   authMiddleware,
   categoryController.getCategories,
 );
 
 categoryRouter.post(
-  '/createCategory',
+  '/create',
   authMiddleware,
   categoryController.createCategory,
 );
 
 categoryRouter.patch(
-  '/updateCategory',
+  '/update',
   authMiddleware,
   categoryController.updateCategory,
 );
 
 categoryRouter.delete(
-  '/deleteCategory',
+  '/delete',
   authMiddleware,
   categoryController.deleteCategory,
 );

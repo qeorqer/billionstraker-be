@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import * as balanceService from '@services/balance.service';
 import ApiError from '@exceptions/api-errors';
+import { Balance } from '@type/balance.type';
 
 type ControllerFunction = (
   req: Request,
@@ -9,20 +10,25 @@ type ControllerFunction = (
   next: NextFunction,
 ) => Promise<Response | void>;
 
+//TODO: simplify services logic
+
 export const createBalance: ControllerFunction = async (req, res, next) => {
   try {
-    const { name, amount }: { name: string; amount: number } = req.body;
+    const { balance }: { balance: Partial<Balance> } = req.body;
     const { userId } = req.body.user;
 
-    if (!name) {
+    if (!balance.name) {
       return next(ApiError.BadRequest('Name is required'));
     }
 
-    const balance = await balanceService.createBalance(name, amount, userId);
+    const createdBalance = await balanceService.createBalance({
+      balance,
+      userId,
+    });
 
     return res.json({
       message: 'Balance created successfully',
-      balance,
+      balance: createdBalance,
     });
   } catch (e) {
     next(e);
@@ -46,18 +52,17 @@ export const getBalances: ControllerFunction = async (req, res, next) => {
 
 export const updateBalance: ControllerFunction = async (req, res, next) => {
   try {
-    const { balanceId, balance } = req.body;
+    const { balance } = req.body;
     const { userId } = req.body.user;
 
-    if (!balanceId || !balance) {
-      return next(ApiError.BadRequest('BalanceId and balance are required'));
+    if (!balance) {
+      return next(ApiError.BadRequest('Balance is required'));
     }
 
-    const updatedBalance = await balanceService.updateBalance(
-      balanceId,
+    const updatedBalance = await balanceService.updateBalance({
       balance,
       userId,
-    );
+    });
 
     return res.json({
       message: 'Balance updated successfully',

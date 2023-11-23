@@ -10,6 +10,12 @@ type ControllerFunction = (
   next: NextFunction,
 ) => Promise<Response | void>;
 
+type GetUserTransactionsReq = {
+  limit: number;
+  numberToSkip: number;
+  filteringOptions: FilteringOptions;
+};
+
 export const createTransaction: ControllerFunction = async (req, res, next) => {
   try {
     const { transaction, balanceId, balanceToSubtractId } = req.body;
@@ -86,12 +92,6 @@ export const editTransaction: ControllerFunction = async (req, res, next) => {
   }
 };
 
-type getUserTransactionsReqBodyType = {
-  limit: number;
-  numberToSkip: number;
-  filteringOptions: FilteringOptions;
-};
-
 export const getUserTransactions: ControllerFunction = async (
   req,
   res,
@@ -103,7 +103,7 @@ export const getUserTransactions: ControllerFunction = async (
       limit,
       numberToSkip,
       filteringOptions,
-    }: getUserTransactionsReqBodyType = req.body;
+    }: GetUserTransactionsReq = req.body;
 
     const transactionRes = await transactionService.getUserTransactions(
       userId,

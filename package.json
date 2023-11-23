@@ -17,8 +17,10 @@
     "node": "16.4.1"
   },
   "dependencies": {
+    "axios": "^1.6.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
+    "chalk": "^4.1.2",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "decimal.js": "^10.4.0",
@@ -59,6 +61,7 @@
     "@type": "./dist/types",
     "@middlewares": "./dist/middlewares",
     "@exceptions": "./dist/exceptions",
-    "@dto": "./dist/dto"
+    "@dto": "./dist/dto",
+    "@utils": "./dist/utils"
   }
 }

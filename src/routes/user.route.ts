@@ -7,7 +7,7 @@ import authMiddleware from '@middlewares/auth.middleware';
 const userRouter: Router = Router();
 
 userRouter.post(
-  '/signUp',
+  '/signup',
   [
     check('login', 'incorrect email').isEmail(),
     check('password', 'must contain at least 6 symbols').isLength({ min: 6 }),
@@ -16,7 +16,7 @@ userRouter.post(
 );
 
 userRouter.post(
-  '/logIn',
+  '/login',
   [
     check('login', 'enter normalized email').normalizeEmail().isEmail(),
     check('password', 'must contain at least 6 symbols').isLength({ min: 6 }),
@@ -24,14 +24,12 @@ userRouter.post(
   userController.logIn,
 );
 
-userRouter.get('/refresh', userController.refresh);
+userRouter.post('/refresh', userController.refresh);
 
-userRouter.post('/logOut', userController.logOut);
+userRouter.get('/get', authMiddleware, userController.getUser);
 
-userRouter.patch(
-  '/setFirstEnter',
-  authMiddleware,
-  userController.setFirstEnter,
-);
+userRouter.post('/logout', userController.logOut);
+
+userRouter.patch('/update', authMiddleware, userController.updateUser);
 
 export default userRouter;

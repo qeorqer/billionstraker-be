@@ -1,6 +1,6 @@
 import { Document, model, Schema, Types } from 'mongoose';
 
-import { TransactionType } from '@type/transaction.type';
+import { Transaction } from '@type/transaction.type';
 
 const transactionTypes = ['expense', 'profit', 'exchange'];
 
@@ -16,5 +16,5 @@ const schema: Schema = new Schema({
   date: { type: Date, default: new Date(), required: true },
 });
 
-export type MongooseTransaction = Document & TransactionType;
+export type MongooseTransaction = Document & Transaction;
 export default model<MongooseTransaction>('Transaction', schema);

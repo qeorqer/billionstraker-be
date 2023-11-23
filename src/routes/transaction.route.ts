@@ -6,25 +6,25 @@ import * as transactionController from '@controllers/transaction.controller';
 const transactionRouter: Router = Router();
 
 transactionRouter.post(
-  '/createTransaction',
+  '/create',
   authMiddleware,
   transactionController.createTransaction,
 );
 
 transactionRouter.post(
-  '/getAllUserTransactions',
+  '/get',
   authMiddleware,
   transactionController.getUserTransactions,
 );
 
 transactionRouter.delete(
-  '/deleteTransaction',
+  '/delete',
   authMiddleware,
   transactionController.deleteTransaction,
 );
 
 transactionRouter.patch(
-  '/editTransaction',
+  '/update',
   authMiddleware,
   transactionController.editTransaction,
 );
