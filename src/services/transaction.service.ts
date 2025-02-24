@@ -159,6 +159,7 @@ export const createTransaction = async (
 
 type conditionForSearchType = {
   ownerId: Types.ObjectId;
+  title?: {$regex: string; $options?: string};
   transactionType?: string;
   balance?: { $in: string[] };
   $or?: [
@@ -179,6 +180,10 @@ const formConditionForSearch = (
   const result: conditionForSearchType = {
     ownerId: userId,
   };
+
+  if (filteringOptions.transactionName) {
+    result.title = { $regex: filteringOptions.transactionName, $options: "i" };
+  }
 
   if (filteringOptions.shownTransactionsTypes !== 'all transactions') {
     result.transactionType = filteringOptions.shownTransactionsTypes;
@@ -218,13 +223,7 @@ export const getUserTransactions = async (
   userId: Types.ObjectId,
   limit: number,
   numberToSkip: number,
-  filteringOptions: {
-    shownTransactionsTypes: string;
-    categoriesToShow: string[];
-    balancesToShow: string[];
-    from: Date;
-    to: Date;
-  },
+  filteringOptions: FilteringOptions,
 ): Promise<getAllTransactionsReturnType | null> => {
   const conditionsForSearch = formConditionForSearch(userId, filteringOptions);
   const transactions = await TransactionModel.find(

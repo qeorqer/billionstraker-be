@@ -17,6 +17,7 @@ export type Transaction = {
 
 export type FilteringOptions = {
   shownTransactionsTypes: string;
+  transactionName: string;
   categoriesToShow: string[];
   balancesToShow: string[];
   from: Date;
