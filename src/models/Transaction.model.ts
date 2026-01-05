@@ -5,7 +5,7 @@ import { Transaction } from '@type/transaction.type';
 const transactionTypes = ['expense', 'profit', 'exchange'];
 
 const schema: Schema = new Schema({
-  title: { type: String, required: true },
+  title: { type: String, required: false, default: '' },
   ownerId: { type: Types.ObjectId, ref: 'User', required: true },
   sum: { type: Number, required: true },
   sumToSubtract: { type: Number, required: false },
